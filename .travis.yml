@@ -1,0 +1,5 @@
+language: erlang
+notification:
+	email: yet.another.mqtt.server@gmail.com
+otp_release:
+	- 18
