@@ -1,0 +1,15 @@
+{application, yams_mqtt_lib,
+ [{description, "An MQTT core library!"},
+  {vsn, git},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {licenses, []},
+  {links, []}
+ ]}.
