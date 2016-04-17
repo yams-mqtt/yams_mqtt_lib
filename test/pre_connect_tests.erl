@@ -9,6 +9,7 @@
 -module(pre_connect_tests).
 -include_lib("eunit/include/eunit.hrl").
 
+-record(testdata, {msgtype, dup, qos, retain}).
 %%%===================================================================
 %%% Tests
 %%%===================================================================
@@ -24,6 +25,22 @@ validate_first_byte_for_connack_test() ->
 %% PUBLISH Test
 validate_first_byte_for_publish_test() ->
     ?assertEqual({ok, publish, <<100>>}, pre_connect:validate_first_byte(<<3:4, 0:1, 0:2, 0:1, 100:8>>)).
+
+%% PUBLISH Test with DUP flag = 1
+validate_first_byte_for_publish_with_dup_flag_value_1_test() ->
+    ?assertEqual({ok, publish, <<100>>}, pre_connect:validate_first_byte(<<3:4, 1:1, 0:2, 0:1, 100:8>>)).
+
+%% PUBLISH Test with Qos flag = 1
+validate_first_byte_for_publish_with_qos_flag_value_1_test() ->
+    ?assertEqual({ok, publish, <<100>>}, pre_connect:validate_first_byte(<<3:4, 1:1, 1:2, 0:1, 100:8>>)).
+
+%% PUBLISH Test with Qos flag = 2
+validate_first_byte_for_publish_with_qos_flag_value_2_test() ->
+    ?assertEqual({ok, publish, <<100>>}, pre_connect:validate_first_byte(<<3:4, 0:1, 2:2, 0:1, 100:8>>)).
+
+%% PUBLISH Test with Retain flag = 1
+validate_first_byte_for_publish_with_retain_flag_value_1_test() ->
+    ?assertEqual({ok, publish, <<100>>}, pre_connect:validate_first_byte(<<3:4, 0:1, 2:2, 1:1, 100:8>>)).
 
 %% PUBACK Test
 validate_first_byte_for_puback_test() ->
@@ -69,10 +86,108 @@ validate_first_byte_for_pingresp_test() ->
 validate_first_byte_for_disconnect_test() ->
     ?assertEqual({ok, disconnect, <<100>>}, pre_connect:validate_first_byte(<<14:4, 0:1, 0:2, 0:1, 100:8>>)).
 
-%% INVALID_TYPE_0 Test
-validate_first_byte_for_invalid_type_0_test() ->
-    ?assertEqual({error, invalid_fb, <<>>}, pre_connect:validate_first_byte(<<0:4, 0:1, 0:2, 0:1, 100:8>>)).
+%% Test Invalid values
+invalidate_first_byte_test() ->
+    TstData = [ %%% Invalid Type = 0
+		#testdata{msgtype = 0, dup = 0, qos = 0, retain = 0}
+	      , #testdata{msgtype = 0, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 0, dup = 0, qos = 1, retain = 0}
+	      , #testdata{msgtype = 0, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 0, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 0, dup = 0, qos = 0, retain = 1}
+                %%% Invalid Type = 15
+		#testdata{msgtype = 15, dup = 0, qos = 0, retain = 0}
+	      , #testdata{msgtype = 15, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 15, dup = 0, qos = 1, retain = 0}
+	      , #testdata{msgtype = 15, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 15, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 15, dup = 0, qos = 0, retain = 1}
+                %%% Type = 1 (CONNECT)
+		#testdata{msgtype = 1, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 1, dup = 0, qos = 1, retain = 0}
+	      , #testdata{msgtype = 1, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 1, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 1, dup = 0, qos = 0, retain = 1}
+                %%% Type = 2 (CONNACK)
+		#testdata{msgtype = 2, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 2, dup = 0, qos = 1, retain = 0}
+	      , #testdata{msgtype = 2, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 2, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 2, dup = 0, qos = 0, retain = 1}
+                %%% Type = 3 (PUBLISH)
+		%%% #testdata{msgtype = 3, dup = 1, qos = 0, retain = 0}
+                %%% , #testdata{msgtype = 3, dup = 0, qos = 1, retain = 0}
+	        %%% , #testdata{msgtype = 3, dup = 0, qos = 2, retain = 0}
+	        %%% , #testdata{msgtype = 3, dup = 0, qos = 3, retain = 0}
+	        %%% , #testdata{msgtype = 3, dup = 0, qos = 0, retain = 1}
+                %%% Type = 4 (PUBACK)
+		#testdata{msgtype = 4, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 4, dup = 0, qos = 1, retain = 0}
+	      , #testdata{msgtype = 4, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 4, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 4, dup = 0, qos = 0, retain = 1}
+                %%% Type = 5 (PUBREC)
+		#testdata{msgtype = 5, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 5, dup = 0, qos = 1, retain = 0}
+	      , #testdata{msgtype = 5, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 5, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 5, dup = 0, qos = 0, retain = 1}
+                %%% Type = 6 (PUBREL)
+		#testdata{msgtype = 6, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 6, dup = 0, qos = 0, retain = 0}
+	      , #testdata{msgtype = 6, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 6, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 6, dup = 0, qos = 0, retain = 1}
+                %%% Type = 7 (PUBCOMP)
+		#testdata{msgtype = 7, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 7, dup = 0, qos = 1, retain = 0}
+	      , #testdata{msgtype = 7, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 7, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 7, dup = 0, qos = 0, retain = 1}
+                %%% Type = 8 (SUBSCRIBE)
+		#testdata{msgtype = 8, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 8, dup = 0, qos = 0, retain = 0}
+	      , #testdata{msgtype = 8, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 8, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 8, dup = 0, qos = 0, retain = 1}
+                %%% Type = 9 (SUBACK)
+		#testdata{msgtype = 9, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 9, dup = 0, qos = 1, retain = 0}
+	      , #testdata{msgtype = 9, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 9, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 9, dup = 0, qos = 0, retain = 1}
+                %%% Type = 10 (UNSUBSCRIBE)
+		#testdata{msgtype = 10, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 10, dup = 0, qos = 0, retain = 0}
+	      , #testdata{msgtype = 10, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 10, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 10, dup = 0, qos = 0, retain = 1}
+                %%% Type = 11 (UNSUBACK)
+		#testdata{msgtype = 11, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 11, dup = 0, qos = 1, retain = 0}
+	      , #testdata{msgtype = 11, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 11, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 11, dup = 0, qos = 0, retain = 1}
+                %%% Type = 12 (PINGREQ)
+		#testdata{msgtype = 12, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 12, dup = 0, qos = 1, retain = 0}
+	      , #testdata{msgtype = 12, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 12, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 12, dup = 0, qos = 0, retain = 1}
+                %%% Type = 13 (PINGRESP)
+		#testdata{msgtype = 13, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 13, dup = 0, qos = 1, retain = 0}
+	      , #testdata{msgtype = 13, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 13, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 13, dup = 0, qos = 0, retain = 1}
+                %%% Type = 14 (DISCONNECT)
+		#testdata{msgtype = 14, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 14, dup = 0, qos = 1, retain = 0}
+	      , #testdata{msgtype = 14, dup = 0, qos = 2, retain = 0}
+	      , #testdata{msgtype = 14, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 14, dup = 0, qos = 0, retain = 1}
+	      ],
+    [assert_for_invalid_first_byte(TD) || TD <- TstData ].
 
-%% INVALID_TYPE_15 Test
-validate_first_byte_for_invalid_type_15_test() ->
-    ?assertEqual({error, invalid_fb, <<>>}, pre_connect:validate_first_byte(<<15:4, 0:1, 0:2, 0:1, 100:8>>)).
+assert_for_invalid_first_byte(#testdata{msgtype = MsgType, dup = Dup, qos = QoS, retain = Retain}) ->
+    ?assertEqual({error, invalid_fb, <<>>}, pre_connect:validate_first_byte(<<MsgType:4, Dup:1, QoS:2, Retain:1, 100:8>>)).
