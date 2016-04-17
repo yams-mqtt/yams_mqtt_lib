@@ -76,4 +76,3 @@ validate_first_byte_for_invalid_type_0_test() ->
 %% INVALID_TYPE_15 Test
 validate_first_byte_for_invalid_type_15_test() ->
     ?assertEqual({error, invalid_fb, <<>>}, pre_connect:validate_first_byte(<<15:4, 0:1, 0:2, 0:1, 100:8>>)).
-
