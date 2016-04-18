@@ -115,11 +115,7 @@ invalidate_first_byte_test() ->
 	      , #testdata{msgtype = 2, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 2, dup = 0, qos = 0, retain = 1}
                 %%% Type = 3 (PUBLISH)
-		%%% #testdata{msgtype = 3, dup = 1, qos = 0, retain = 0}
-                %%% , #testdata{msgtype = 3, dup = 0, qos = 1, retain = 0}
-	        %%% , #testdata{msgtype = 3, dup = 0, qos = 2, retain = 0}
 	        %%% , #testdata{msgtype = 3, dup = 0, qos = 3, retain = 0}
-	        %%% , #testdata{msgtype = 3, dup = 0, qos = 0, retain = 1}
                 %%% Type = 4 (PUBACK)
 		#testdata{msgtype = 4, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 4, dup = 0, qos = 1, retain = 0}
