@@ -9,7 +9,7 @@
 
 %% API
 -export([
-	 validate_first_byte/1,
+	 validate_msg_type/1,
 	 validate_remaining_length/1
 	]).
 -define(MAX_LENGTH, 268435455). % Maximum allowed length of the topic.
@@ -17,35 +17,35 @@
 %%===================================================================
 %%Validate first byte of the packet to determine its type and validate
 %%bit flags (bit#3 to bit#0)
-validate_first_byte(<<1:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<1:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
     {ok, connect, Rest};
-validate_first_byte(<<2:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<2:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
     {ok, connack, Rest};
-validate_first_byte(<<3:4, _Dup:1, _QoS:2, _Retain:1, Rest/binary>>) -> 
+validate_msg_type(<<3:4, _Dup:1, _QoS:2, _Retain:1, Rest/binary>>) -> 
     {ok, publish, Rest};
-validate_first_byte(<<4:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<4:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
     {ok, puback, Rest};
-validate_first_byte(<<5:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<5:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
     {ok, pubrec, Rest};
-validate_first_byte(<<6:4, 0:1, 1:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<6:4, 0:1, 1:2, 0:1, Rest/binary>>) -> 
     {ok, pubrel, Rest};
-validate_first_byte(<<7:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<7:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
     {ok,pubcomp, Rest};
-validate_first_byte(<<8:4, 0:1, 1:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<8:4, 0:1, 1:2, 0:1, Rest/binary>>) -> 
     {ok, subscribe, Rest};
-validate_first_byte(<<9:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<9:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
     {ok, suback, Rest};
-validate_first_byte(<<10:4, 0:1, 1:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<10:4, 0:1, 1:2, 0:1, Rest/binary>>) -> 
     {ok, unsubscribe, Rest};
-validate_first_byte(<<11:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<11:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
     {ok, unsuback, Rest};
-validate_first_byte(<<12:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<12:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
     {ok, pingreq, Rest};
-validate_first_byte(<<13:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<13:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
     {ok, pingresp, Rest};
-validate_first_byte(<<14:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
+validate_msg_type(<<14:4, 0:1, 0:2, 0:1, Rest/binary>>) -> 
     {ok, disconnect, Rest};
-validate_first_byte(_) -> 
+validate_msg_type(_) -> 
     {error, invalid_fb, <<>>}.
     
 %%===================================================================
