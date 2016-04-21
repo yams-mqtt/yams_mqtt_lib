@@ -114,88 +114,88 @@ invalidate_msg_type_test() ->
 	      , #testdata{msgtype = 0, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 0, dup = 0, qos = 0, retain = 1}
                 %%% Invalid Type = 15
-		#testdata{msgtype = 15, dup = 0, qos = 0, retain = 0}
+	      , #testdata{msgtype = 15, dup = 0, qos = 0, retain = 0}
 	      , #testdata{msgtype = 15, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 15, dup = 0, qos = 1, retain = 0}
 	      , #testdata{msgtype = 15, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 15, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 15, dup = 0, qos = 0, retain = 1}
                 %%% Type = 1 (CONNECT)
-		#testdata{msgtype = 1, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 1, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 1, dup = 0, qos = 1, retain = 0}
 	      , #testdata{msgtype = 1, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 1, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 1, dup = 0, qos = 0, retain = 1}
                 %%% Type = 2 (CONNACK)
-		#testdata{msgtype = 2, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 2, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 2, dup = 0, qos = 1, retain = 0}
 	      , #testdata{msgtype = 2, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 2, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 2, dup = 0, qos = 0, retain = 1}
                 %%% Type = 3 (PUBLISH)
-	        %%% , #testdata{msgtype = 3, dup = 0, qos = 3, retain = 0}
+	      , #testdata{msgtype = 3, dup = 0, qos = 3, retain = 0}
                 %%% Type = 4 (PUBACK)
-		#testdata{msgtype = 4, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 4, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 4, dup = 0, qos = 1, retain = 0}
 	      , #testdata{msgtype = 4, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 4, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 4, dup = 0, qos = 0, retain = 1}
                 %%% Type = 5 (PUBREC)
-		#testdata{msgtype = 5, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 5, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 5, dup = 0, qos = 1, retain = 0}
 	      , #testdata{msgtype = 5, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 5, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 5, dup = 0, qos = 0, retain = 1}
                 %%% Type = 6 (PUBREL)
-		#testdata{msgtype = 6, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 6, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 6, dup = 0, qos = 0, retain = 0}
 	      , #testdata{msgtype = 6, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 6, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 6, dup = 0, qos = 0, retain = 1}
                 %%% Type = 7 (PUBCOMP)
-		#testdata{msgtype = 7, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 7, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 7, dup = 0, qos = 1, retain = 0}
 	      , #testdata{msgtype = 7, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 7, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 7, dup = 0, qos = 0, retain = 1}
                 %%% Type = 8 (SUBSCRIBE)
-		#testdata{msgtype = 8, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 8, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 8, dup = 0, qos = 0, retain = 0}
 	      , #testdata{msgtype = 8, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 8, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 8, dup = 0, qos = 0, retain = 1}
                 %%% Type = 9 (SUBACK)
-		#testdata{msgtype = 9, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 9, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 9, dup = 0, qos = 1, retain = 0}
 	      , #testdata{msgtype = 9, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 9, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 9, dup = 0, qos = 0, retain = 1}
                 %%% Type = 10 (UNSUBSCRIBE)
-		#testdata{msgtype = 10, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 10, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 10, dup = 0, qos = 0, retain = 0}
 	      , #testdata{msgtype = 10, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 10, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 10, dup = 0, qos = 0, retain = 1}
                 %%% Type = 11 (UNSUBACK)
-		#testdata{msgtype = 11, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 11, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 11, dup = 0, qos = 1, retain = 0}
 	      , #testdata{msgtype = 11, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 11, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 11, dup = 0, qos = 0, retain = 1}
                 %%% Type = 12 (PINGREQ)
-		#testdata{msgtype = 12, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 12, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 12, dup = 0, qos = 1, retain = 0}
 	      , #testdata{msgtype = 12, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 12, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 12, dup = 0, qos = 0, retain = 1}
                 %%% Type = 13 (PINGRESP)
-		#testdata{msgtype = 13, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 13, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 13, dup = 0, qos = 1, retain = 0}
 	      , #testdata{msgtype = 13, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 13, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 13, dup = 0, qos = 0, retain = 1}
                 %%% Type = 14 (DISCONNECT)
-		#testdata{msgtype = 14, dup = 1, qos = 0, retain = 0}
+	      , #testdata{msgtype = 14, dup = 1, qos = 0, retain = 0}
 	      , #testdata{msgtype = 14, dup = 0, qos = 1, retain = 0}
 	      , #testdata{msgtype = 14, dup = 0, qos = 2, retain = 0}
 	      , #testdata{msgtype = 14, dup = 0, qos = 3, retain = 0}

@@ -22,7 +22,11 @@ get_msg_type(<<1:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) ->
     {ok, connect, Bin};
 get_msg_type(<<2:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) -> 
     {ok, connack, Bin};
-get_msg_type(<<3:4, _Dup:1, _QoS:2, _Retain:1, _RemainingBin>> = Bin) -> 
+get_msg_type(<<3:4, _Dup:1, 0:2, _Retain:1, _RemainingBin>> = Bin) -> 
+    {ok, publish, Bin};
+get_msg_type(<<3:4, _Dup:1, 1:2, _Retain:1, _RemainingBin>> = Bin) -> 
+    {ok, publish, Bin};
+get_msg_type(<<3:4, _Dup:1, 2:2, _Retain:1, _RemainingBin>> = Bin) -> 
     {ok, publish, Bin};
 get_msg_type(<<4:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) -> 
     {ok, puback, Bin};
