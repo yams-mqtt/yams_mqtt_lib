@@ -15,76 +15,94 @@
 %%%===================================================================
 
 %% CONNECT Test
-validate_msg_type_for_connect_test() ->
-    ?assertEqual({ok, connect, <<100>>}, pre_connect:validate_msg_type(<<1:4, 0:1, 0:2, 0:1, 100:8>>)).
+get_msg_type_for_connect_test() ->
+    Bin = <<1:4, 0:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, connect, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% CONNACK Test
-validate_msg_type_for_connack_test() ->
-    ?assertEqual({ok, connack, <<100>>}, pre_connect:validate_msg_type(<<2:4, 0:1, 0:2, 0:1, 100:8>>)).
+get_msg_type_for_connack_test() ->
+    Bin = <<2:4, 0:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, connack, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% PUBLISH Test
-validate_msg_type_for_publish_test() ->
-    ?assertEqual({ok, publish, <<100>>}, pre_connect:validate_msg_type(<<3:4, 0:1, 0:2, 0:1, 100:8>>)).
+get_msg_type_for_publish_test() ->
+    Bin = <<3:4, 0:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, publish, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% PUBLISH Test with DUP flag = 1
-validate_msg_type_for_publish_with_dup_flag_value_1_test() ->
-    ?assertEqual({ok, publish, <<100>>}, pre_connect:validate_msg_type(<<3:4, 1:1, 0:2, 0:1, 100:8>>)).
+get_msg_type_for_publish_with_dup_flag_value_1_test() ->
+    Bin = <<3:4, 1:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, publish, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% PUBLISH Test with Qos flag = 1
-validate_msg_type_for_publish_with_qos_flag_value_1_test() ->
-    ?assertEqual({ok, publish, <<100>>}, pre_connect:validate_msg_type(<<3:4, 1:1, 1:2, 0:1, 100:8>>)).
+get_msg_type_for_publish_with_qos_flag_value_1_test() ->
+    Bin = <<3:4, 1:1, 1:2, 0:1, 100:8>>,
+    ?assertEqual({ok, publish, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% PUBLISH Test with Qos flag = 2
-validate_msg_type_for_publish_with_qos_flag_value_2_test() ->
-    ?assertEqual({ok, publish, <<100>>}, pre_connect:validate_msg_type(<<3:4, 0:1, 2:2, 0:1, 100:8>>)).
+get_msg_type_for_publish_with_qos_flag_value_2_test() ->
+    Bin = <<3:4, 0:1, 2:2, 0:1, 100:8>>,
+    ?assertEqual({ok, publish, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% PUBLISH Test with Retain flag = 1
-validate_msg_type_for_publish_with_retain_flag_value_1_test() ->
-    ?assertEqual({ok, publish, <<100>>}, pre_connect:validate_msg_type(<<3:4, 0:1, 2:2, 1:1, 100:8>>)).
+get_msg_type_for_publish_with_retain_flag_value_1_test() ->
+    Bin = <<3:4, 0:1, 2:2, 1:1, 100:8>>,
+    ?assertEqual({ok, publish, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% PUBACK Test
-validate_msg_type_for_puback_test() ->
-    ?assertEqual({ok, puback, <<100>>}, pre_connect:validate_msg_type(<<4:4, 0:1, 0:2, 0:1, 100:8>>)).
+get_msg_type_for_puback_test() ->
+    Bin = <<4:4, 0:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, puback, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% PUBREC Test
-validate_msg_type_for_pubrec_test() ->
-    ?assertEqual({ok, pubrec, <<100>>}, pre_connect:validate_msg_type(<<5:4, 0:1, 0:2, 0:1, 100:8>>)).
+get_msg_type_for_pubrec_test() ->
+    Bin = <<5:4, 0:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, pubrec, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% PUBREL Test
-validate_msg_type_for_pubrel_test() ->
-    ?assertEqual({ok, pubrel, <<100>>}, pre_connect:validate_msg_type(<<6:4, 0:1, 1:2, 0:1, 100:8>>)).
+get_msg_type_for_pubrel_test() ->
+    Bin = <<6:4, 0:1, 1:2, 0:1, 100:8>>,
+    ?assertEqual({ok, pubrel, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% PUBCOMP Test
-validate_msg_type_for_pubcomp_test() ->
-    ?assertEqual({ok, pubcomp, <<100>>}, pre_connect:validate_msg_type(<<7:4, 0:1, 0:2, 0:1, 100:8>>)).
+get_msg_type_for_pubcomp_test() ->
+    Bin = <<7:4, 0:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, pubcomp, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% SUBSCRIBE Test
-validate_msg_type_for_subscribe_test() ->
-    ?assertEqual({ok, subscribe, <<100>>}, pre_connect:validate_msg_type(<<8:4, 0:1, 1:2, 0:1, 100:8>>)).
+get_msg_type_for_subscribe_test() ->
+    Bin = <<8:4, 0:1, 1:2, 0:1, 100:8>>,
+    ?assertEqual({ok, subscribe, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% SUBACK Test
-validate_msg_type_for_suback_test() ->
-    ?assertEqual({ok, suback, <<100>>}, pre_connect:validate_msg_type(<<9:4, 0:1, 0:2, 0:1, 100:8>>)).
+get_msg_type_for_suback_test() ->
+    Bin = <<9:4, 0:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, suback, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% UNSUBSCRIBE Test
-validate_msg_type_for_unsubscribe_test() ->
-    ?assertEqual({ok, unsubscribe, <<100>>}, pre_connect:validate_msg_type(<<10:4, 0:1, 1:2, 0:1, 100:8>>)).
+get_msg_type_for_unsubscribe_test() ->
+    Bin = <<10:4, 0:1, 1:2, 0:1, 100:8>>,
+    ?assertEqual({ok, unsubscribe, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% UNSUBACK Test
-validate_msg_type_for_unsuback_test() ->
-    ?assertEqual({ok, unsuback, <<100>>}, pre_connect:validate_msg_type(<<11:4, 0:1, 0:2, 0:1, 100:8>>)).
+get_msg_type_for_unsuback_test() ->
+    Bin = <<11:4, 0:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, unsuback, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% PINGREQ Test
-validate_msg_type_for_pingreq_test() ->
-    ?assertEqual({ok, pingreq, <<100>>}, pre_connect:validate_msg_type(<<12:4, 0:1, 0:2, 0:1, 100:8>>)).
+get_msg_type_for_pingreq_test() ->
+    Bin = <<12:4, 0:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, pingreq, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% PINGRESP Test
-validate_msg_type_for_pingresp_test() ->
-    ?assertEqual({ok, pingresp, <<100>>}, pre_connect:validate_msg_type(<<13:4, 0:1, 0:2, 0:1, 100:8>>)).
+get_msg_type_for_pingresp_test() ->
+    Bin = <<13:4, 0:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, pingresp, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% DISCONNECT Test
-validate_msg_type_for_disconnect_test() ->
-    ?assertEqual({ok, disconnect, <<100>>}, pre_connect:validate_msg_type(<<14:4, 0:1, 0:2, 0:1, 100:8>>)).
+get_msg_type_for_disconnect_test() ->
+    Bin = <<14:4, 0:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, disconnect, Bin}, pre_connect:get_msg_type(Bin)).
 
 %% Test Invalid values
 invalidate_msg_type_test() ->
@@ -186,4 +204,5 @@ invalidate_msg_type_test() ->
     [assert_for_invalid_msg_type(TD) || TD <- TstData ].
 
 assert_for_invalid_msg_type(#testdata{msgtype = MsgType, dup = Dup, qos = QoS, retain = Retain}) ->
-    ?assertEqual({error, invalid_fb, <<>>}, pre_connect:validate_msg_type(<<MsgType:4, Dup:1, QoS:2, Retain:1, 100:8>>)).
+    Bin = <<MsgType:4, Dup:1, QoS:2, Retain:1, 100:8>>,
+    ?assertEqual({error, invalid_fb, Bin}, pre_connect:get_msg_type(Bin)).
