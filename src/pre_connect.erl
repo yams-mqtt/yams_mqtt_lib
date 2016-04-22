@@ -10,6 +10,7 @@
 %% API
 -export([
 	 get_msg_type/1,
+	 get_bit_flags/1,
 	 validate_remaining_length/1
 	]).
 -define(MAX_LENGTH, 268435455). % Maximum allowed length of the topic.
@@ -54,6 +55,16 @@ get_msg_type(_Bin) ->
     {error, invalid_fb, _Bin}.
     
 %%===================================================================
+%% Get bit flags from the fixed header.
+%% Eventually, this method will be used to extract bit-flags from the 
+%% message type = PUBLISH, because for rest of the message types,
+%% their bit-flags are constant.
+get_bit_flags(<<_Type:4, Dup:1, QoS:2, Retain:1, _RemainingBin>> = Bin) ->
+    {ok, Dup, QoS, Retain, Bin}.
+    
+
+
+%%===================================================================
 %% Decode remaining length from the RestBin (RestBin does not contain
 %% FirstByte). If value of the remaining length field is correct,
 %% return rest of the binary.  Rest of the binary returned will
@@ -75,6 +86,6 @@ validate_remaining_length(<<1:1, Len:7, Rest/binary>>, RLength, Multiplier) ->
 validate_remaining_length(<<0:1, Len:7, Rest/binary>>, RLength, Multiplier)
   when ((RLength + Len * Multiplier) =:= size(Rest)) ->
     {ok, Rest};
-%% Rest of the message is having invalid lenght.
+%% Rest of the message is having invalid length.
 validate_remaining_length(_, _, _) ->
     {error, invalid_rl}.

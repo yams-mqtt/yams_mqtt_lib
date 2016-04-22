@@ -206,3 +206,10 @@ invalidate_msg_type_test() ->
 assert_for_invalid_msg_type(#testdata{msgtype = MsgType, dup = Dup, qos = QoS, retain = Retain}) ->
     Bin = <<MsgType:4, Dup:1, QoS:2, Retain:1, 100:8>>,
     ?assertEqual({error, invalid_fb, Bin}, pre_connect:get_msg_type(Bin)).
+
+%%==================================================================
+%% Test get_bit_flags
+
+get_bit_flags_test() ->
+    Bin = <<3:4, 0:1, 0:2, 0:1, 100:8>>,
+    ?assertEqual({ok, 0, 0, 0, Bin}, pre_connect:get_bit_flags(Bin)).
