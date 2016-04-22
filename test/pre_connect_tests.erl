@@ -210,6 +210,12 @@ assert_for_invalid_msg_type(#testdata{msgtype = MsgType, dup = Dup, qos = QoS, r
 %%==================================================================
 %% Test get_bit_flags
 
-get_bit_flags_test() ->
+get_bit_flags_000_test() ->
     Bin = <<3:4, 0:1, 0:2, 0:1, 100:8>>,
     ?assertEqual({ok, 0, 0, 0, Bin}, pre_connect:get_bit_flags(Bin)).
+get_bit_flags_111_test() ->
+    Bin = <<3:4, 1:1, 1:2, 1:1, 100:8>>,
+    ?assertEqual({ok, 1, 1, 1, Bin}, pre_connect:get_bit_flags(Bin)).
+get_bit_flags_021_test() ->
+    Bin = <<3:4, 0:1, 2:2, 1:1, 100:8>>,
+    ?assertEqual({ok, 0, 2, 1, Bin}, pre_connect:get_bit_flags(Bin)).
