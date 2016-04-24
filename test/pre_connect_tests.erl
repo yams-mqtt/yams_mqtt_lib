@@ -8,7 +8,7 @@
 %%%-------------------------------------------------------------------
 -module(pre_connect_tests).
 -include_lib("eunit/include/eunit.hrl").
-
+-include("../include/yams_lib.hrl").
 -record(testdata, {msgtype, dup, qos, retain}).
 %%%===================================================================
 %%% Tests
@@ -16,96 +16,96 @@
 
 %% CONNECT Test
 get_msg_type_for_connect_test() ->
-    Bin = <<1:4, 0:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, connect, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = connect, dup = 0, qos = 0, retain = 0}, 100}
+		,(pre_connect:compile_type_byte(<<1:4, 0:1, 0:2, 0:1, 100:8>>))).
 
 %% CONNACK Test
 get_msg_type_for_connack_test() ->
-    Bin = <<2:4, 0:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, connack, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = connack, dup = 0, qos = 0, retain = 0}, 2}
+		,(pre_connect:compile_type_byte(<<2:4, 0:1, 0:2, 0:1, 2:8>>))).
 
 %% PUBLISH Test
 get_msg_type_for_publish_test() ->
-    Bin = <<3:4, 0:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, publish, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = publish, dup = 0, qos = 0, retain = 0}, 100}
+		,(pre_connect:compile_type_byte(<<3:4, 0:1, 0:2, 0:1, 100:8>>))).
 
 %% PUBLISH Test with DUP flag = 1
 get_msg_type_for_publish_with_dup_flag_value_1_test() ->
-    Bin = <<3:4, 1:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, publish, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = publish, dup = 1, qos = 0, retain = 0}, 100}
+		,(pre_connect:compile_type_byte(<<3:4, 1:1, 0:2, 0:1, 100:8>>))).
 
 %% PUBLISH Test with Qos flag = 1
 get_msg_type_for_publish_with_qos_flag_value_1_test() ->
-    Bin = <<3:4, 1:1, 1:2, 0:1, 100:8>>,
-    ?assertEqual({ok, publish, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = publish, dup = 1, qos = 1, retain = 0}, 100}
+		,(pre_connect:compile_type_byte(<<3:4, 1:1, 1:2, 0:1, 100:8>>))).
 
 %% PUBLISH Test with Qos flag = 2
 get_msg_type_for_publish_with_qos_flag_value_2_test() ->
-    Bin = <<3:4, 0:1, 2:2, 0:1, 100:8>>,
-    ?assertEqual({ok, publish, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = publish, dup = 0, qos = 2, retain = 0}, 100}
+		,(pre_connect:compile_type_byte(<<3:4, 0:1, 2:2, 0:1, 100:8>>))).
 
 %% PUBLISH Test with Retain flag = 1
 get_msg_type_for_publish_with_retain_flag_value_1_test() ->
-    Bin = <<3:4, 0:1, 2:2, 1:1, 100:8>>,
-    ?assertEqual({ok, publish, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = publish, dup = 0, qos = 2, retain = 1}, 100}
+		,(pre_connect:compile_type_byte(<<3:4, 0:1, 2:2, 1:1, 100:8>>))).
 
 %% PUBACK Test
 get_msg_type_for_puback_test() ->
-    Bin = <<4:4, 0:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, puback, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = puback, dup = 0, qos = 0, retain = 0}, 2}
+		,(pre_connect:compile_type_byte(<<4:4, 0:1, 0:2, 0:1, 2:8>>))).
 
 %% PUBREC Test
 get_msg_type_for_pubrec_test() ->
-    Bin = <<5:4, 0:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, pubrec, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = pubrec, dup = 0, qos = 0, retain = 0}, 2}
+		,(pre_connect:compile_type_byte(<<5:4, 0:1, 0:2, 0:1, 2:8>>))).
 
 %% PUBREL Test
 get_msg_type_for_pubrel_test() ->
-    Bin = <<6:4, 0:1, 1:2, 0:1, 100:8>>,
-    ?assertEqual({ok, pubrel, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = pubrel, dup = 0, qos = 1, retain = 0}, 2}
+		,(pre_connect:compile_type_byte(<<6:4, 0:1, 1:2, 0:1, 2:8>>))).
 
 %% PUBCOMP Test
 get_msg_type_for_pubcomp_test() ->
-    Bin = <<7:4, 0:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, pubcomp, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = pubcomp, dup = 0, qos = 0, retain = 0}, 2}
+		,(pre_connect:compile_type_byte(<<7:4, 0:1, 0:2, 0:1, 2:8>>))).
 
 %% SUBSCRIBE Test
 get_msg_type_for_subscribe_test() ->
-    Bin = <<8:4, 0:1, 1:2, 0:1, 100:8>>,
-    ?assertEqual({ok, subscribe, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = subscribe, dup = 0, qos = 1, retain = 0}, 100}
+		,(pre_connect:compile_type_byte(<<8:4, 0:1, 1:2, 0:1, 100:8>>))).
 
 %% SUBACK Test
 get_msg_type_for_suback_test() ->
-    Bin = <<9:4, 0:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, suback, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = suback, dup = 0, qos = 0, retain = 0}, 100}
+		,(pre_connect:compile_type_byte(<<9:4, 0:1, 0:2, 0:1, 100:8>>))).
 
 %% UNSUBSCRIBE Test
 get_msg_type_for_unsubscribe_test() ->
-    Bin = <<10:4, 0:1, 1:2, 0:1, 100:8>>,
-    ?assertEqual({ok, unsubscribe, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = unsubscribe, dup = 0, qos = 1, retain = 0}, 100}
+		,(pre_connect:compile_type_byte(<<10:4, 0:1, 1:2, 0:1, 100:8>>))).
 
 %% UNSUBACK Test
 get_msg_type_for_unsuback_test() ->
-    Bin = <<11:4, 0:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, unsuback, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = unsuback, dup = 0, qos = 0, retain = 0}, 2}
+		,(pre_connect:compile_type_byte(<<11:4, 0:1, 0:2, 0:1, 2:8>>))).
 
 %% PINGREQ Test
 get_msg_type_for_pingreq_test() ->
-    Bin = <<12:4, 0:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, pingreq, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = pingreq, dup = 0, qos = 0, retain = 0}, 0}
+		,(pre_connect:compile_type_byte(<<12:4, 0:1, 0:2, 0:1, 0:8>>))).
 
 %% PINGRESP Test
 get_msg_type_for_pingresp_test() ->
-    Bin = <<13:4, 0:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, pingresp, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = pingresp, dup = 0, qos = 0, retain = 0}, 0}
+		,(pre_connect:compile_type_byte(<<13:4, 0:1, 0:2, 0:1, 0:8>>))).
 
 %% DISCONNECT Test
 get_msg_type_for_disconnect_test() ->
-    Bin = <<14:4, 0:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, disconnect, Bin}, pre_connect:get_msg_type(Bin)).
+    ?assertEqual({ok, #type_byte{msgtype = disconnect, dup = 0, qos = 0, retain = 0}, 0}
+		,(pre_connect:compile_type_byte(<<14:4, 0:1, 0:2, 0:1, 0:8>>))).
 
 %% Test Invalid values
-invalidate_msg_type_test() ->
+invalidate_type_byte_test() ->
     TstData = [ %%% Invalid Type = 0
 		#testdata{msgtype = 0, dup = 0, qos = 0, retain = 0}
 	      , #testdata{msgtype = 0, dup = 1, qos = 0, retain = 0}
@@ -201,21 +201,8 @@ invalidate_msg_type_test() ->
 	      , #testdata{msgtype = 14, dup = 0, qos = 3, retain = 0}
 	      , #testdata{msgtype = 14, dup = 0, qos = 0, retain = 1}
 	      ],
-    [assert_for_invalid_msg_type(TD) || TD <- TstData ].
+    [assert_for_invalid_type_byte(TD) || TD <- TstData ].
 
-assert_for_invalid_msg_type(#testdata{msgtype = MsgType, dup = Dup, qos = QoS, retain = Retain}) ->
+assert_for_invalid_type_byte(#testdata{msgtype = MsgType, dup = Dup, qos = QoS, retain = Retain}) ->
     Bin = <<MsgType:4, Dup:1, QoS:2, Retain:1, 100:8>>,
-    ?assertEqual({error, invalid_fb, Bin}, pre_connect:get_msg_type(Bin)).
-
-%%==================================================================
-%% Test get_bit_flags
-
-get_bit_flags_000_test() ->
-    Bin = <<3:4, 0:1, 0:2, 0:1, 100:8>>,
-    ?assertEqual({ok, 0, 0, 0, Bin}, pre_connect:get_bit_flags(Bin)).
-get_bit_flags_111_test() ->
-    Bin = <<3:4, 1:1, 1:2, 1:1, 100:8>>,
-    ?assertEqual({ok, 1, 1, 1, Bin}, pre_connect:get_bit_flags(Bin)).
-get_bit_flags_021_test() ->
-    Bin = <<3:4, 0:1, 2:2, 1:1, 100:8>>,
-    ?assertEqual({ok, 0, 2, 1, Bin}, pre_connect:get_bit_flags(Bin)).
+    ?assertEqual({error, invalid_fb, Bin}, (pre_connect:compile_type_byte(Bin))).

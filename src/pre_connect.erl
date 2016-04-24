@@ -6,86 +6,76 @@
 %%% @end Created : 13 April 2016 by kuldeep
 %%% -------------------------------------------------------------------
 -module(pre_connect).
-
+-include("../include/yams_lib.hrl").
 %% API
 -export([
-	 get_msg_type/1,
-	 get_bit_flags/1,
-	 validate_remaining_length/1
+	 compile_type_byte/1,
+	 get_var_load/1
 	]).
 -define(MAX_LENGTH, 268435455). % Maximum allowed length of the topic.
 
 %%===================================================================
-%% Validate first byte of the packet as follows...
-%% Validate and determine message type. 
-%% Validate bit flags (bit#3 to bit#0).
-get_msg_type(<<1:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok, connect, Bin};
-get_msg_type(<<2:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok, connack, Bin};
-get_msg_type(<<3:4, _Dup:1, 0:2, _Retain:1, _RemainingBin>> = Bin) -> 
-    {ok, publish, Bin};
-get_msg_type(<<3:4, _Dup:1, 1:2, _Retain:1, _RemainingBin>> = Bin) -> 
-    {ok, publish, Bin};
-get_msg_type(<<3:4, _Dup:1, 2:2, _Retain:1, _RemainingBin>> = Bin) -> 
-    {ok, publish, Bin};
-get_msg_type(<<4:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok, puback, Bin};
-get_msg_type(<<5:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok, pubrec, Bin};
-get_msg_type(<<6:4, 0:1, 1:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok, pubrel, Bin};
-get_msg_type(<<7:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok,pubcomp, Bin};
-get_msg_type(<<8:4, 0:1, 1:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok, subscribe, Bin};
-get_msg_type(<<9:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok, suback, Bin};
-get_msg_type(<<10:4, 0:1, 1:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok, unsubscribe, Bin};
-get_msg_type(<<11:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok, unsuback, Bin};
-get_msg_type(<<12:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok, pingreq, Bin};
-get_msg_type(<<13:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok, pingresp, Bin};
-get_msg_type(<<14:4, 0:1, 0:2, 0:1, _RemainingBin>> = Bin) -> 
-    {ok, disconnect, Bin};
-get_msg_type(_Bin) -> 
-    {error, invalid_fb, _Bin}.
+%% Roughly speaking, compile_type_byte behaves like a compiler-front-end.
+%% It scans (creates tokens from the) first byte of the control packet (a packet henceforth), 
+%% And parses (analyzes) the tokens and determines if they are valid values or errors.
+%% As an output the function returns...
+%%     values of packet type and bit flags, extracted from the type-byte and remaining binary or
+%%     error along with its reason and the binary passed to i.
+compile_type_byte(<<1:4, 0:1, 0:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = connect, dup = 0, qos = 0, retain = 0}, RemainingBin};
+compile_type_byte(<<2:4, 0:1, 0:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = connack, dup = 0, qos = 0, retain = 0}, RemainingBin};
+compile_type_byte(<<3:4, Dup:1, 0:2, Retain:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = publish, dup = Dup, qos = 0, retain = Retain}, RemainingBin};
+compile_type_byte(<<3:4, Dup:1, 1:2, Retain:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = publish, dup = Dup, qos = 1, retain = Retain}, RemainingBin};
+compile_type_byte(<<3:4, Dup:1, 2:2, Retain:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = publish, dup = Dup, qos = 2, retain = Retain}, RemainingBin};
+compile_type_byte(<<4:4, 0:1, 0:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = puback, dup = 0, qos = 0, retain = 0}, RemainingBin};
+compile_type_byte(<<5:4, 0:1, 0:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = pubrec, dup = 0, qos = 0, retain = 0}, RemainingBin};
+compile_type_byte(<<6:4, 0:1, 1:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = pubrel, dup = 0, qos = 1, retain = 0}, RemainingBin};
+compile_type_byte(<<7:4, 0:1, 0:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = pubcomp, dup = 0, qos = 0, retain = 0}, RemainingBin};
+compile_type_byte(<<8:4, 0:1, 1:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = subscribe, dup = 0, qos = 1, retain = 0}, RemainingBin};
+compile_type_byte(<<9:4, 0:1, 0:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = suback, dup = 0, qos = 0, retain = 0}, RemainingBin};
+compile_type_byte(<<10:4, 0:1, 1:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = unsubscribe, dup = 0, qos = 1, retain = 0}, RemainingBin};
+compile_type_byte(<<11:4, 0:1, 0:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = unsuback, dup = 0, qos = 0, retain = 0}, RemainingBin};
+compile_type_byte(<<12:4, 0:1, 0:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = pingreq, dup = 0, qos = 0, retain = 0}, RemainingBin};
+compile_type_byte(<<13:4, 0:1, 0:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = pingresp, dup = 0, qos = 0, retain = 0}, RemainingBin};
+compile_type_byte(<<14:4, 0:1, 0:2, 0:1, RemainingBin>>) ->
+    {ok, #type_byte{msgtype = disconnect, dup = 0, qos = 0, retain = 0}, RemainingBin};
+compile_type_byte(OtherBin) ->
+    {error, invalid_fb, OtherBin}.
     
 %%===================================================================
-%% Get bit flags from the fixed header.
-%% Eventually, this method will be used to extract bit-flags from the 
-%% message type = PUBLISH, because for rest of the message types,
-%% their bit-flags are constant.
-get_bit_flags(<<_Type:4, Dup:1, QoS:2, Retain:1, _RemainingBin>> = Bin) ->
-    {ok, Dup, QoS, Retain, Bin}.
-    
+%% This function splits the binary into...
+%% 1. First byte (message type byte), which is ignored by the function.
+%% 2. Remaining length of the var_load (= variable header + payload)
+%% 3. var_load
+get_var_load(<<_TypeByte:8, RestBin/binary>>) ->
+    get_var_load(RestBin, 0, 1).
 
-
-%%===================================================================
-%% Decode remaining length from the RestBin (RestBin does not contain
-%% FirstByte). If value of the remaining length field is correct,
-%% return rest of the binary.  Rest of the binary returned will
-%% contain variable header and payload.  Rest of the binary returned
-%% will not contain fixed header.  If value of the remaining length
-%% field is not correct, return error.
-validate_remaining_length(Rest) ->
-    validate_remaining_length(Rest, 0, 1).
-
-validate_remaining_length(_, RLength, _)
+get_var_load(_, RLength, _)
   when (RLength > ?MAX_LENGTH) ->
     {error, remaining_length_exceeds_max_length};
 %% Calculate the remaining length value:
 %% Recurse if the value of the first bit is 1.
-validate_remaining_length(<<1:1, Len:7, Rest/binary>>, RLength, Multiplier) ->
-    validate_remaining_length(Rest, RLength + Len * Multiplier, Multiplier * 128);
+get_var_load(<<1:1, Len:7, Rest/binary>>, RLength, Multiplier) ->
+    get_var_load(Rest, RLength + Len * Multiplier, Multiplier * 128);
 %% Calculate Value of the remaining length :
 %% Return if the value of the first bit is 0.
-validate_remaining_length(<<0:1, Len:7, Rest/binary>>, RLength, Multiplier)
+get_var_load(<<0:1, Len:7, Rest/binary>>, RLength, Multiplier)
   when ((RLength + Len * Multiplier) =:= size(Rest)) ->
     {ok, Rest};
 %% Rest of the message is having invalid length.
-validate_remaining_length(_, _, _) ->
+get_var_load(_, _, _) ->
     {error, invalid_rl}.
