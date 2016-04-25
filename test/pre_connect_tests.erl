@@ -241,6 +241,6 @@ compile_valid_remaining_length_2097152_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 2097152, <<100:16777216>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 128:8, 128:8, 128:8, 1:8, 100:16777216>>))).
 
-%compile_valid_remaining_length_268435455_test() ->
-%    ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 268435455, <<100:2147483640>>}
-%		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 255:8, 255:8, 255:8, 127:8, 100:2147483640>>))).
+compile_valid_remaining_length_268435455_test() ->
+    ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 268435455, <<100:2147483640>>}
+		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 255:8, 255:8, 255:8, 127:8, 100:2147483640>>))).
