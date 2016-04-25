@@ -20,7 +20,7 @@
 %% And parses (analyzes) the tokens and determines if they are valid values or errors.
 %% As an output the function returns...
 %%     values of packet type and bit flags, extracted from the type-byte and remaining binary or
-%%     error along with its reason and the binary passed to i.
+%%     error along with its reason and the binary passed to it.
 compile_packet_type(<<1:4, 0:1, 0:2, 0:1, RemainingBin/binary>>) ->
     {ok, #packet_type{msgtype = connect, dup = 0, qos = 0, retain = 0}, RemainingBin};
 compile_packet_type(<<2:4, 0:1, 0:2, 0:1, RemainingBin/binary>>) ->
