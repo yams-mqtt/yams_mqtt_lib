@@ -208,39 +208,43 @@ assert_for_invalid_packet_type(#testdata{msgtype = MsgType, dup = Dup, qos = QoS
     ?assertEqual({error, invalid_fb, Bin}, (pre_connect:compile_packet_type(Bin))).
 
 %%==========================================================================
-%% compile_remaining_length_test
+%% compile_remaining_length_test - lower limit of the first byte of the remaining length.
 compile_valid_remaining_length_0_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 0, <<>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 0:8>>))).
-
+%% compile_remaining_length_test - where remaining length is 2 bytes.
 compile_valid_remaining_length_1_test() ->
-    ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 1, <<100>>}
-		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 1:8, 100:8>>))).
-
+    ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 2, <<100:16>>}
+		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 2:8, 100:16>>))).
+%% compile_remaining_length_test - upper limit of the first byte of the remaining length.
 compile_valid_remaining_length_127_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 127, <<100:1016>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 127:8, 100:1016>>))).
-
+%% compile_remaining_length_test - lower limit of the second byte of the remaining length.
 compile_valid_remaining_length_128_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 128, <<100:1024>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 128:8, 1:8, 100:1024>>))).
-
+%% compile_remaining_length_test - upper limit of the second byte of the remaining length.
 compile_valid_remaining_length_16383_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 16383, <<100:131064>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 255:8, 127:8, 100:131064>>))).
-
+%% compile_remaining_length_test - lower limit of the third byte of the remaining length.
 compile_valid_remaining_length_16384_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 16384, <<100:131072>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 128:8, 128:8, 1:8, 100:131072>>))).
-
+%% compile_remaining_length_test - upper limit of the third byte of the remaining length.
 compile_valid_remaining_length_2097151_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 2097151, <<100:16777208>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 255:8, 255:8, 127:8, 100:16777208>>))).
-
+%% compile_remaining_length_test - lower limit of the fourth byte of the remaining length.
 compile_valid_remaining_length_2097152_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 2097152, <<100:16777216>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 128:8, 128:8, 128:8, 1:8, 100:16777216>>))).
-
+%% compile_remaining_length_test - upper limit of the fourth byte of the remaining length.
 compile_valid_remaining_length_268435455_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 268435455, <<100:2147483640>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 255:8, 255:8, 255:8, 127:8, 100:2147483640>>))).
+%% compile_remaining_length_test - exceeding the upper limit of the fourth byte of the remaining length.
+compile_valid_remaining_length_268435456_test() ->
+    ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 268435456, <<100:2147483648>>}
+		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 128:8, 128:8, 128:8, 128:8, 1:8, 100:2147483648>>))).
