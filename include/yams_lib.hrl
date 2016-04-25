@@ -4,4 +4,4 @@
 %% 2. Bit flag - Duplicate (bit#3)
 %% 3. Bit flag - Quality of Service (bit#2 and bit#1)
 %% 4. Bit flag - Retain (bit#0)
--record(type_byte, {msgtype, dup, qos, retain}).
+-record(packet_type, {msgtype, dup, qos, retain}).
