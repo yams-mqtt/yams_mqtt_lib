@@ -9,11 +9,15 @@
 -include("../include/yams_lib.hrl").
 %% API
 -export([
-	 compile_packet_type/1,
-	 compile_remaining_length/1
+	compile_packet/1,
+	compile_packet_type/1,
+	compile_remaining_length/1
 	]).
 -define(MAX_LENGTH, 268435455). % Maximum allowed length of the topic.
 
+%%===================================================================
+compile_packet(Binary) ->
+    compile_remaining_length(compile_packet_type(Binary)).
 %%===================================================================
 %% Roughly speaking, compile_packet_type behaves like a compiler-front-end.
 %% It scans (creates tokens from the) first byte of the control packet (a packet henceforth), 

@@ -207,6 +207,7 @@ invalidate_packet_type_test() ->
 assert_for_invalid_packet_type(#testdata{msgtype = MsgType, dup = Dup, qos = QoS, retain = Retain}) ->
     Bin = <<MsgType:4, Dup:1, QoS:2, Retain:1, 100:8>>,
     ?assertEqual({error, invalid_fb, Bin}, (pre_connect:compile_packet_type(Bin))).
+
 %% Pass result of invalid packet type to the compile_remaining_length function.
 compile_remaining_length_when_packetype_has_error_test(#testdata{msgtype = MsgType, dup = Dup, qos = QoS, retain = Retain}) ->
     Bin = <<MsgType:4, Dup:1, QoS:2, Retain:1, 100:8>>,
@@ -218,10 +219,12 @@ compile_remaining_length_when_packetype_has_error_test(#testdata{msgtype = MsgTy
 compile_remaining_length_invalid_input_test() ->
     ?assertEqual( {error, invalid_input, "Fuzzy Input"}
 		, pre_connect:compile_remaining_length("Fuzzy Input")).
+
 %% compile_remaining_length_test - when remaining binary is too short
 compile_remaining_length_when_remaining_binary_is_too_short_test() ->
     ?assertEqual( {error, remaining_length_value_unequal_to_the_actual_length, {packet_type,connect,0,0,0}, 1, <<>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 1:8>>))).
+
 %% compile_remaining_length_test - when remaining binary is too long
 compile_remaining_length_when_remaining_binary_is_too_long_test() ->
     ?assertEqual( {error, remaining_length_value_unequal_to_the_actual_length, {packet_type,connect,0,0,0}, 1, <<100:16>>}
@@ -231,6 +234,7 @@ compile_remaining_length_when_remaining_binary_is_too_long_test() ->
 compile_remaining_length_0_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 0, <<>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 0:8>>))).
+
 %% compile_remaining_length_test - where remaining length is 2 bytes.
 compile_remaining_length_1_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 2, <<100:16>>}
@@ -239,29 +243,35 @@ compile_remaining_length_1_test() ->
 compile_remaining_length_127_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 127, <<100:1016>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 127:8, 100:1016>>))).
+
 %% compile_remaining_length_test - lower limit of the second byte of the remaining length.
 compile_remaining_length_128_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 128, <<100:1024>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 128:8, 1:8, 100:1024>>))).
+
 %% compile_remaining_length_test - upper limit of the second byte of the remaining length.
 compile_remaining_length_16383_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 16383, <<100:131064>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 255:8, 127:8, 100:131064>>))).
+
 %% compile_remaining_length_test - lower limit of the third byte of the remaining length.
 compile_remaining_length_16384_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 16384, <<100:131072>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 128:8, 128:8, 1:8, 100:131072>>))).
+
+
 %% compile_remaining_length_test - upper limit of the third byte of the remaining length.
 compile_remaining_length_2097151_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 2097151, <<100:16777208>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 255:8, 255:8, 127:8, 100:16777208>>))).
+
 %% compile_remaining_length_test - lower limit of the fourth byte of the remaining length.
 compile_remaining_length_2097152_test() ->
     ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 2097152, <<100:16777216>>}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 128:8, 128:8, 128:8, 1:8, 100:16777216>>))).
 
 %%=========================
-%% Note : Following 2 test are not dead code.
+%% Note : Following tests are not dead code.
 %% They are valid tests. I have commented them only because they are resource hungry.
 %%=========================
 
@@ -269,9 +279,17 @@ compile_remaining_length_2097152_test() ->
 %%compile_remaining_length_268435455_test() ->
 %%    ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 268435455, <<100:2147483640>>}
 %%		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 255:8, 255:8, 255:8, 127:8, 100:2147483640>>))).
+
 %%%% compile_remaining_length_test - exceeding the upper limit of the fourth byte of the remaining length.
 %%compile_remaining_length_268435456_test() ->
 %%    ?assertEqual( {ok, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, 268435456, <<100:2147483648>>}
 %%		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 128:8, 128:8, 128:8, 128:8, 1:8, 100:2147483648>>))).
 
+%%=========================
+%% compile packet
+%%=========================
 
+%% compile_remaining_length_test - lower limit of the second byte of the remaining length.
+compile_packet_test() ->
+    ?assertEqual( {ok, #packet_type{msgtype = publish, dup =0, qos = 0, retain = 0}, 128, <<100:1024>>}
+		, pre_connect:compile_packet(<<3:4, 0:4, 128:8, 1:8, 100:1024>>)).
