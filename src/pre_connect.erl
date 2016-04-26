@@ -16,6 +16,11 @@
 -define(MAX_LENGTH, 268435455). % Maximum allowed length of the topic.
 
 %%===================================================================
+-spec compile_packet(binary()) -> 
+			    {'error','invalid_fb' | 'invalid_input' | 'remaining_length_exceeds_max_length',_} 
+			  | {'error','remaining_length_value_unequal_to_the_actual_length',_,non_neg_integer(),binary()}
+			  | {'ok',_,non_neg_integer(),binary()}.
+				
 compile_packet(Binary) ->
     compile_remaining_length(compile_packet_type(Binary)).
 %%===================================================================
@@ -25,6 +30,11 @@ compile_packet(Binary) ->
 %% As an output the function returns...
 %%     values of packet type and bit flags, extracted from the type-byte and remaining binary or
 %%     error along with its reason and the binary passed to it.
+%%===================================================================
+-spec compile_packet_type(binary()) -> 
+				 {'error','invalid_fb',_} 
+			       | {'ok',#packet_type{msgtype::atom(),dup::0 | 1,qos::0 | 1 | 2,retain::0 | 1},binary()}.
+
 compile_packet_type(<<1:4, 0:1, 0:2, 0:1, RemainingBin/binary>>) ->
     {ok, #packet_type{msgtype = connect, dup = 0, qos = 0, retain = 0}, RemainingBin};
 compile_packet_type(<<2:4, 0:1, 0:2, 0:1, RemainingBin/binary>>) ->
@@ -64,6 +74,12 @@ compile_packet_type(OtherBin) ->
 %% This function splits the remaining binary into...
 %% 1. Remaining length of the packet, which I call it - var_load (= variable header + payload)
 %% 2. var_load
+%%===================================================================
+-spec compile_remaining_length(_) -> 
+				      {'error','invalid_fb' | 'invalid_input' | 'remaining_length_exceeds_max_length',_} 
+				    | {'error','remaining_length_value_unequal_to_the_actual_length',_,non_neg_integer(),binary()}
+				    | {'ok',_,non_neg_integer(),binary()}.
+
 compile_remaining_length({ok, PacketType, RemainingBin}) ->
     compile_remaining_length({PacketType, RemainingBin}, 0, 1);
 compile_remaining_length({error, invalid_fb, OtherBin}) ->
@@ -71,7 +87,14 @@ compile_remaining_length({error, invalid_fb, OtherBin}) ->
 compile_remaining_length(Input) ->
     {error, invalid_input, Input}.
 
-
+%%==============================================
+%% internal function.
+%%==============================================
+-spec compile_remaining_length({_,_},non_neg_integer(),pos_integer()) -> 
+				      {'error','remaining_length_exceeds_max_length',{_,_}} 
+				    | {'error','remaining_length_value_unequal_to_the_actual_length',_,non_neg_integer(),binary()} 
+				    | {'ok',_,non_neg_integer(),binary()}.
+				    
 compile_remaining_length(TypeCompiledPacket, RemainingLength, _Multiplier)
   when (RemainingLength > ?MAX_LENGTH) ->
     {error, remaining_length_exceeds_max_length, TypeCompiledPacket};
