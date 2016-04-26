@@ -4,7 +4,7 @@ notifications:
 otp_release:
   - 18.3
 before_script:
-  - export PLT_FILENAME=include/.dialyzer_plt
+  - export PLT_FILENAME=include/yams_lib.plt
 script:
   - rebar compile
   - rebar skip_deps=true eunit
