@@ -4,4 +4,4 @@ notifications:
 otp_release:
   - 18.3
 script:
-	rebar compile && rebar skip_deps=true eunit && dialyzer -r _build/test/lib/yams_mqtt_lib/ebin/
+  - rebar compile && rebar skip_deps=true eunit && dialyzer -r _build/test/lib/yams_mqtt_lib/ebin/
