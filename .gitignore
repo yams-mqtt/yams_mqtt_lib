@@ -4,6 +4,7 @@ _*
 deps
 *.o
 *.beam
+*plt
 *.swp
 .erlang.cookie
 erl_crash.dump
