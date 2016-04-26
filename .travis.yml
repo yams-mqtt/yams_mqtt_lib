@@ -3,5 +3,5 @@ notifications:
   email: yet.another.mqtt.server@gmail.com
 otp_release:
   - 18.3
-script:
+after_script:
   - dialyzer -r _build/test/lib/yams_mqtt_lib/ebin/
