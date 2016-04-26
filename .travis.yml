@@ -3,3 +3,8 @@ notifications:
   email: yet.another.mqtt.server@gmail.com
 otp_release:
   - 18.3
+script:
+  - rebar compile
+  - rebar skip_deps=true eunit
+  - dialyzer --build_plt --apps erts kernel stdlib mnesia
+  - dialyzer -r ebin/
