@@ -3,3 +3,7 @@ notifications:
   email: yet.another.mqtt.server@gmail.com
 otp_release:
   - 18.3
+before_script:
+  - export BIN_PATH=_build/test/lib/yams_mqtt_lib/ebin/
+script:
+  - dialyzer -r $BIN_PATH
