@@ -7,4 +7,4 @@ script:
   - rebar compile
   - rebar skip_deps=true eunit
   - dialyzer --build_plt --apps erts kernel stdlib mnesia
-  - dialyzer -r ebin/
+  - dialyzer -r src/ --src
