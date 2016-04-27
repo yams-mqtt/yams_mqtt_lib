@@ -90,7 +90,7 @@ compile_remaining_length(Input) ->
 %%==============================================
 %% internal function.
 %%==============================================
--spec compile_remaining_length({_,_},non_neg_integer(),pos_integer()) -> 
+-spec compile_remaining_length({binary()},non_neg_integer(),pos_integer()) -> 
 				      {'error','remaining_length_exceeds_max_length',{_,_}} 
 				    | {'error','remaining_length_value_unequal_to_the_actual_length',_,non_neg_integer(),binary()} 
 				    | {'ok',_,non_neg_integer(),binary()}.
