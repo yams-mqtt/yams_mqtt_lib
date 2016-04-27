@@ -215,11 +215,6 @@ compile_remaining_length_when_packetype_has_error_test(#testdata{msgtype = MsgTy
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(Bin))).
 
 %%==========================================================================
-%% compile_remaining_length_test - when some arbitrary invalid input is passed.
-compile_remaining_length_invalid_input_test() ->
-    ?assertEqual( {error, invalid_input, "Fuzzy Input"}
-		, pre_connect:compile_remaining_length("Fuzzy Input")).
-
 %% compile_remaining_length_test - when remaining binary is too short
 compile_remaining_length_when_remaining_binary_is_too_short_test() ->
     ?assertEqual( {error, remaining_length_value_unequal_to_the_actual_length, {packet_type,connect,0,0,0}, 1, <<>>}
