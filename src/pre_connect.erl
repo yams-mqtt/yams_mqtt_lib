@@ -27,9 +27,9 @@ compile_packet(Binary) ->
 %% Roughly speaking, compile_packet_type/1 behaves like a compiler-front-end.
 %% It scans (creates tokens from the) first byte of the control packet. 
 %% And parses (analyzes) the tokens and determines their validity.
-%% As an output the function returns...
-%%     values of packet type and bit flags, extracted from the type-byte and remaining binary or
-%%     error along with its reason and the binary passed to it.
+%% As an output the function returns following.
+%%  1. Values of packet type and bit flags and remaining binary.
+%%  2. Or error, its reason and the binary passed to it.
 %%===================================================================
 -type packet_binary()     :: <<_:16, _:_*8>>.
 -type packet_type()       :: #packet_type{msgtype::atom(),dup::0 | 1,qos::0 | 1 | 2,retain::0 | 1}.
