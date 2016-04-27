@@ -24,7 +24,7 @@
 compile_packet(Binary) ->
     compile_remaining_length(compile_packet_type(Binary)).
 %%===================================================================
-%% Roughly speaking, compile_packet_type behaves like a compiler-front-end.
+%% Roughly speaking, compile_packet_type/1 behaves like a compiler-front-end.
 %% It scans (creates tokens from the) first byte of the control packet (a packet henceforth), 
 %% And parses (analyzes) the tokens and determines if they are valid values or errors.
 %% As an output the function returns...
