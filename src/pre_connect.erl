@@ -29,7 +29,8 @@ compile_packet(Binary) ->
 %%===================================================================
 -type packet_binary()     :: <<_:16, _:_*8>>.
 -type packet_type()       :: #packet_type{msgtype::atom(),
-					  dup::0 | 1,qos::0 | 1 | 2,
+					  dup::0 | 1,
+					  qos::0 | 1 | 2,
 					  retain::0 | 1}.
 -type packet_type_ok()    :: {'ok'
 			     ,packet_type()
