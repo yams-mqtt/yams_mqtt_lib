@@ -8,11 +8,7 @@
 -module(pre_connect).
 -include("../include/yams_lib.hrl").
 %% API
--export([
-	compile_packet/1,
-	compile_packet_type/1,
-	compile_remaining_length/1
-	]).
+-export([compile_packet/1]).
 -define(MAX_LENGTH, 268435455). % Maximum allowed length of the topic.
 
 %%===================================================================
@@ -32,7 +28,10 @@ compile_packet(Binary) ->
 %%  2. Or error, its reason and the binary passed to it.
 %%===================================================================
 -type packet_binary()     :: <<_:16, _:_*8>>.
--type packet_type()       :: #packet_type{msgtype::atom(),dup::0 | 1,qos::0 | 1 | 2,retain::0 | 1}.
+-type packet_type()       :: #packet_type{msgtype::atom(),
+					  dup::0 | 1,
+					  qos::0 | 1 | 2,
+					  retain::0 | 1}.
 -type packet_type_ok()    :: {'ok'
 			     ,packet_type()
 			     ,binary()}.
@@ -82,8 +81,8 @@ compile_packet_type(OtherBin) ->
     
 %%===================================================================
 %% This function splits the remaining binary into...
-%% 1. Remaining length of the packet, which I call it - var_load (= variable header + payload)
-%% 2. var_load
+%% 1. Remaining length of the packet, which I call it - var_load
+%% 2. var_load (= variable header + payload)
 %%===================================================================
 -spec compile_remaining_length(packet_type_ok()
 			      |packet_type_error())->
