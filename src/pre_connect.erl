@@ -8,11 +8,12 @@
 -module(pre_connect).
 -include("../include/yams_lib.hrl").
 %% API
--export([
-	compile_packet/1,
-	compile_packet_type/1,
-	compile_remaining_length/1
-	]).
+-export([compile_packet/1]).
+
+%%-ifdef(TEST).
+%%-compile(export_all).
+%%-endif.
+
 -define(MAX_LENGTH, 268435455). % Maximum allowed length of the topic.
 
 %%===================================================================
