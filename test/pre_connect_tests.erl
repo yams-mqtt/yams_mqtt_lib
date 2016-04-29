@@ -279,7 +279,7 @@ compile_remaining_length_268435455_test() ->
 
 %% compile_remaining_length_test - exceeding the upper limit of the fourth byte of the remaining length.
 compile_remaining_length_268435456_test() ->
-    ?assertEqual( {error, remaining_length_exceeds_max_length, #packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, <<128:8, 1:8, 100:2147483648>>}
+    ?assertEqual( {error, remaining_length_exceeds_max_length, {#packet_type{msgtype = connect, dup =0, qos = 0, retain = 0}, <<1:8, 100:2147483648>>}}
 		, pre_connect:compile_remaining_length(pre_connect:compile_packet_type(<<1:4, 0:4, 128:8, 128:8, 128:8, 128:8, 1:8, 100:2147483648>>))).
 
 %%=========================
