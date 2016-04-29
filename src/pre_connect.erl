@@ -115,8 +115,8 @@ compile_remaining_length({error, invalid_fb, OtherBin}) ->
 				      remaining_length_ok()
 				     |remaining_length_error().
 				    
-compile_remaining_length(TypeCompiledPacket, RemainingLength, _Multiplier)
-  when (RemainingLength > ?MAX_LENGTH) ->
+compile_remaining_length(TypeCompiledPacket, _RemainingLength, Multiplier)
+  when (Multiplier > 128 * 128 * 128) ->
     {error, remaining_length_exceeds_max_length, TypeCompiledPacket};
 %% Calculate the remaining length value:
 %% Recurse if the value of the first bit is 1.
