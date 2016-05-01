@@ -5,10 +5,11 @@
 %%%
 %%% @end Created : 13 April 2016 by kuldeep
 %%% -------------------------------------------------------------------
--module(pre_connect).
+-module(pre_processor).
 -include("../include/yams_lib.hrl").
 %% API
 -export([compile_packet/1]).
+%% Macro
 -define(MAX_LENGTH, 268435455). % Maximum allowed length of the topic.
 
 %%===================================================================
