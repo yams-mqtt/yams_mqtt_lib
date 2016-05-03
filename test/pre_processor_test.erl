@@ -218,12 +218,12 @@ interprete_remaining_length_when_packetype_has_error_test_() ->
 
 %% interprete_remaining_length_test - when remaining binary is too short
 interprete_remaining_length_when_remaining_binary_is_too_short_test() ->
-    ?assertEqual({error, remaining_length_value_unequal_to_the_actual_length, {packet_type,connect,0,0,0}, 1, <<>>},
+    ?assertEqual({error, remaining_length_differs_actual_length, {packet_type,connect,0,0,0}, 1, <<>>},
 		 (pre_processor:interprete_remaining_length(pre_processor:interprete_packet_type(<<1:4, 0:4, 1:8>>)))).
 
 %% interprete_remaining_length_test - when remaining binary is too long
 interprete_remaining_length_when_remaining_binary_is_too_long_test() ->
-    ?assertEqual({error, remaining_length_value_unequal_to_the_actual_length, {packet_type,connect,0,0,0}, 1, <<100:16>>},
+    ?assertEqual({error, remaining_length_differs_actual_length, {packet_type,connect,0,0,0}, 1, <<100:16>>},
 		 (pre_processor:interprete_remaining_length(pre_processor:interprete_packet_type(<<1:4, 0:4, 1:8, 100:16>>)))).
 
 %% interprete_remaining_length_test - lower limit of the first byte of the remaining length.
