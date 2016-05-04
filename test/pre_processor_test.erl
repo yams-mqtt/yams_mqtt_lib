@@ -204,7 +204,7 @@ get_test_data() ->
 
 invalid_type_byte_test_() ->
     TestData = get_test_data(),
-    [?_assertEqual({error, invalid_fb, <<Pkttype:4, Dup:1, QoS:2, Retain:1, 100:8>>}, 
+    [?_assertEqual({error, invalid_tb, <<Pkttype:4, Dup:1, QoS:2, Retain:1, 100:8>>}, 
 		  (pre_processor:interprete_type_byte(<<Pkttype:4, Dup:1, QoS:2, Retain:1, 100:8>>)))
      || #testdata{pkttype = Pkttype, dup = Dup, qos = QoS, retain = Retain} <- TestData ].
 
@@ -212,7 +212,7 @@ invalid_type_byte_test_() ->
 %% Pass result of invalid packet type to the interprete_remaining_length function.
 interprete_remaining_length_when_packetype_has_error_test_() ->
     TestData = get_test_data(),
-    [?_assertEqual({error, invalid_fb, <<Pkttype:4, Dup:1, QoS:2, Retain:1, 100:8>>}, 
+    [?_assertEqual({error, invalid_tb, <<Pkttype:4, Dup:1, QoS:2, Retain:1, 100:8>>}, 
 		  (pre_processor:interprete_remaining_length(pre_processor:interprete_type_byte(<<Pkttype:4, Dup:1, QoS:2, Retain:1, 100:8>>))))
      || #testdata{pkttype = Pkttype, dup = Dup, qos = QoS, retain = Retain} <- TestData ].
 
@@ -272,12 +272,12 @@ interprete_remaining_length_2097152_test() ->
 %% While they run OK on machines provision by TravisCI.
 %%=========================
 
-%% %% interprete_remaining_length_test - upper limit of the fourth byte of the remaining length.
+%% interprete_remaining_length_test - upper limit of the fourth byte of the remaining length.
 interprete_remaining_length_268435455_test() ->
     ?assertEqual({ok, #type_byte{pkttype = connect, dup =0, qos = 0, retain = 0}, 268435455, <<100:2147483640>>},
 		 (pre_processor:interprete_remaining_length(pre_processor:interprete_type_byte(<<1:4, 0:4, 255:8, 255:8, 255:8, 127:8, 100:2147483640>>)))).
 
-%% %% %% interprete_remaining_length_test - exceeding the upper limit of the fourth byte of the remaining length.
+%% interprete_remaining_length_test - exceeding the upper limit of the fourth byte of the remaining length.
 interprete_remaining_length_268435456_test() ->
     ?assertEqual({error, remaining_length_exceeds_max_length, {#type_byte{pkttype = connect, dup =0, qos = 0, retain = 0}, <<1:8, 100:2147483648>>}},
 		 (pre_processor:interprete_remaining_length(pre_processor:interprete_type_byte(<<1:4, 0:4, 128:8, 128:8, 128:8, 128:8, 1:8, 100:2147483648>>)))).
@@ -289,4 +289,4 @@ interprete_remaining_length_268435456_test() ->
 %% interprete_remaining_length_test - lower limit of the second byte of the remaining length.
 interprete_packet_test() ->
     ?assertEqual({ok, #type_byte{pkttype = publish, dup =0, qos = 0, retain = 0}, 128, <<100:1024>>},
-		 (pre_processor:interprete_packet(<<3:4, 0:4, 128:8, 1:8, 100:1024>>))).
+		  (pre_processor:interprete_fixed_header(<<3:4, 0:4, 128:8, 1:8, 100:1024>>))).
