@@ -8,7 +8,7 @@
 %%%-------------------------------------------------------------------
 -module(pre_processor_test).
 -include_lib("eunit/include/eunit.hrl").
--include("../include/yams_lib.hrl").
+-include("../include/pre_proc.hrl").
 -record(testdata, {pkttype, dup, qos, retain}).
 %%%===================================================================
 %%% Tests

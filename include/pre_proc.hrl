@@ -14,9 +14,9 @@
 		 | 'pingresp'
 		 | 'disconnect'.
 
--type no()    :: 0.
 -type yes()   :: 1.
--type noyes() :: no() | yes().
+-type no()    :: 0.
+-type yesno() :: yes() | no().
 
 -type atmost1()  :: 0.
 -type atleast1() :: 1.
@@ -29,10 +29,8 @@
 %% 2. Bit flag - Duplicate (bit#3)
 %% 3. Bit flag - Quality of Service (bit#2 and bit#1)
 %% 4. Bit flag - Retain (bit#0)
--record(type_byte, { pkttype::pkttype(),
-			dup:: noyes(),
-			qos:: qos(),
-			retain:: noyes()
-		      }).
-
-%-record(type_byte, {pkttype, dup, qos, retain}).
+-record(type_byte, { pkttype::pkttype()
+		   , dup:: yesno()
+		   , qos:: qos()
+		   , retain:: yesno()
+		   }).
