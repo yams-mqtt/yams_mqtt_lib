@@ -8,7 +8,7 @@
 %%%-------------------------------------------------------------------
 -module(fixed_header_test).
 -include_lib("eunit/include/eunit.hrl").
--include("../include/pre_proc.hrl").
+-include("../include/fixed_header.hrl").
 -record(testdata, {pkttype, dup, qos, retain}).
 %%%===================================================================
 %%% Tests
