@@ -12,6 +12,7 @@
 %% status
 -type status() :: 'active' | 'inactive'.
 
+
 %% client
 -record (client, { clientId :: clientId()
 		 , userName :: userName()
@@ -20,9 +21,16 @@
 		 }).
 
 %% topicFilter
+%% An expression contained in a Subscription, 
+%% to indicate an interest in one or more topics. 
+%% A Topic Filter can include wildcard characters.
 -type topicFilter :: string().
 
 %% subscription
+%% A Subscription comprises a Topic Filter and a maximum QoS. 
+%% A Subscription is associated with a single Session. 
+%% A Session can contain more than one Subscription. 
+%% Each Subscription within a session has a different Topic Filter.
 -record (subscription, { topicFilter :: topicFilter()
 		       , qos         :: qos()
 		       }).
@@ -34,6 +42,10 @@
 -type mailBoxId() :: string().
 
 %% session
+%% A stateful interaction between a Client and a Server. 
+%% Some Sessions last only as long as the Network Connection, 
+%% others can span multiple consecutive Network Connections
+%% between a Client and a Server.
 -record (session, { sessionId     :: uid()
 		  , clientId      :: clientId()
 		  , status        :: status()
@@ -46,11 +58,9 @@
 
 %% message status
 %% TODO duplicate messages are not handled here
-%% TODO still need to know about will and retain messages.
--type msgState :: 'received' 
-		| 'published' 
+-type msgState :: 'publish_received' 
+		| 'publish_sent' 
 		| 'puback_received' 
-		| 'puback_received'
 		| 'puback_sent'
 		| 'pubrec_received'
 		| 'pubrec_sent'
