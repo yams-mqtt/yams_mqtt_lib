@@ -1,4 +1,4 @@
--include("pre_proc.hrl").
+-include("fixed_header.hrl").
 
 %% clientId
 -type clientId() :: string().
@@ -24,7 +24,7 @@
 %% An expression contained in a Subscription, 
 %% to indicate an interest in one or more topics. 
 %% A Topic Filter can include wildcard characters.
--type topicFilter :: string().
+-type topicFilter() :: string().
 
 %% subscription
 %% A Subscription comprises a Topic Filter and a maximum QoS. 
@@ -58,16 +58,16 @@
 
 %% message status
 %% TODO duplicate messages are not handled here
--type msgState :: 'publish_received' 
-		| 'publish_sent' 
-		| 'puback_received' 
-		| 'puback_sent'
-		| 'pubrec_received'
-		| 'pubrec_sent'
-		| 'pubrel_received'
-		| 'pubrel_sent'
-		| 'pubcomp_received'
-		| 'pubcomp_sent'.
+-type msgState() :: 'publish_received' 
+		  | 'publish_sent' 
+		  | 'puback_received' 
+		  | 'puback_sent'
+		  | 'pubrec_received'
+		  | 'pubrec_sent'
+		  | 'pubrel_received'
+		  | 'pubrel_sent'
+		  | 'pubcomp_received'
+		  | 'pubcomp_sent'.
 
 %% message
 -record (message, { messageId :: messageId()
@@ -77,6 +77,6 @@
 
 %% mailbox
 -record (mailbox, { mailBoxId :: mailBoxId()
-		  , sessionId :: sessionId()
+		  , sessionId :: uid()
 		  , messages  :: [#message{}]
 		  }).
