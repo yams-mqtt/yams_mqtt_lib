@@ -32,7 +32,7 @@
 %% A Session can contain more than one Subscription. 
 %% Each Subscription within a session has a different Topic Filter.
 -record (subscription, { topicFilter :: topicFilter()
-		       , qos         :: fixed_header:qos()
+		       , qos         :: qos()
 		       }).
 
 %% uid
@@ -71,12 +71,12 @@
 
 %% message
 -record (message, { messageId :: messageId()
-		  , qos       :: fixed_header:qos()
+		  , qos       :: qos()
 		  , msgState  :: msgState()
 		  }).
 
 %% mailbox
 -record (mailbox, { mailBoxId :: mailBoxId()
-		  , sessionId :: fixed_header:sessionId()
+		  , sessionId :: uid()
 		  , messages  :: [#message{}]
 		  }).

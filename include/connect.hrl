@@ -23,22 +23,22 @@
 -type reserved() :: 0.
 
 %% clean session
--type cln_sess() :: fixed_header:yesno(). 
+-type cln_sess() :: yesno(). 
 
 %% will flag
--type will_flg() :: fixed_header:yesno().
+-type will_flg() :: yesno().
 
 %% will quality of service
--type will_qos() :: fixed_header:qos().
+-type will_qos() :: qos().
 
 %% will retain
--type will_retain() :: fixed_header:yesno().
+-type will_retain() :: yesno().
 
 %% password falg
--type pwd_flg() :: fixed_header:yesno().
+-type pwd_flg() :: yesno().
 
 %% user flag
--type usr_flg() :: fixed_header:yesno().
+-type usr_flg() :: yesno().
 
 %% connnect flags
 -type connect_flgs() :: { usr_flg()
