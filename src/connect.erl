@@ -66,7 +66,7 @@ get_proto_lvl({ok, <<4:16, "MQTT", 4:8, RemainingBin/binary>>}) ->
 %% If protocol level is not equal to 4,
 %% error should be returned in connack
 %% , and connection should be closed.
-get_proto_lvl({ok, <<4:16, "MQTT", _:8, _RemainingBin>>} = Bin) ->
+get_proto_lvl({ok, <<4:16, "MQTT", _:8, _RemainingBin/binary>> = Bin}) ->
     {error, 'connack1', Bin};
 
 %% When error is received to the fn, error is returned
