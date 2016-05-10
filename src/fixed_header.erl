@@ -179,7 +179,7 @@ get_rl({ok, PacketType, RemainingBin}) ->
 -type fixed_header_ok() :: { ok
 			   , type_byte()
 			   , remaining_length()
-			   , varlaod()}.
+			   , varload()}.
 -type fixed_header_error() :: { error
 			      , 'rl_gt_ml' %% greater than max length
 			      , { type_byte(), binary()}
