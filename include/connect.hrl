@@ -10,7 +10,7 @@
 		     | 'invalid_proto' % invalid protocol name 
 		     | 'invalid_rsvd_flg' % invalid reserved flag
 		     | 'no_conn_flags' % Connect flgas unavailable. 
-		     | 'invalid_will' % invalid WQoS or WRtn or both.
+		     | 'invalid_will_flgs' % invalid WQoS or WRtn or both.
 		     | 'invalid_pwd_flg'. % invalid password flag
 
 %% supported protocol

@@ -272,15 +272,15 @@ get_rl_2097152_test() ->
 %% While they run OK on machines provision by TravisCI.
 %%=========================
 
-%% get_rl_test - upper limit of the fourth byte of the remaining length.
-get_rl_268435455_test() ->
-    ?assertEqual({ok, #type_byte{pkttype = connect, dup =0, qos = 0, retain = 0}, 268435455, <<100:2147483640>>},
-		  (fixed_header:get_rl(fixed_header:get_tb(<<1:4, 0:4, 255:8, 255:8, 255:8, 127:8, 100:2147483640>>)))).
+%% %% get_rl_test - upper limit of the fourth byte of the remaining length.
+%% get_rl_268435455_test() ->
+%%     ?assertEqual({ok, #type_byte{pkttype = connect, dup =0, qos = 0, retain = 0}, 268435455, <<100:2147483640>>},
+%% 		  (fixed_header:get_rl(fixed_header:get_tb(<<1:4, 0:4, 255:8, 255:8, 255:8, 127:8, 100:2147483640>>)))).
 
-%% get_rl_test - exceeding the upper limit of the fourth byte of the remaining length.
-get_rl_268435456_test() ->
-    ?assertEqual({error, rl_gt_ml, {#type_byte{pkttype = connect, dup =0, qos = 0, retain = 0}, <<1:8, 100:2147483648>>}},
-		  (fixed_header:get_rl(fixed_header:get_tb(<<1:4, 0:4, 128:8, 128:8, 128:8, 128:8, 1:8, 100:2147483648>>)))).
+%% %% get_rl_test - exceeding the upper limit of the fourth byte of the remaining length.
+%% get_rl_268435456_test() ->
+%%     ?assertEqual({error, rl_gt_ml, {#type_byte{pkttype = connect, dup =0, qos = 0, retain = 0}, <<1:8, 100:2147483648>>}},
+%% 		  (fixed_header:get_rl(fixed_header:get_tb(<<1:4, 0:4, 128:8, 128:8, 128:8, 128:8, 1:8, 100:2147483648>>)))).
 
 %%=========================
 %% get fixed header
