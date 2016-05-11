@@ -113,7 +113,7 @@ get_will_flgs({ok, <<4:16, "MQTT", 4:8, Usr:1, Pwd:1, 0:1, 0:2, 0:1, ClnSess:1, 
 
 %% When Will=0, WQos and WRtn must be 0
 get_will_flgs({ok, <<4:16, "MQTT", 4:8, _Usr:1, _Pwd:1, _WRtn:1, _WQos:2, 0:1, _ClnSess:1, 0:1, _Pload/binary>> = Bin}) ->
-    {error, 'invalid_will', Bin};
+    {error, 'invalid_will_flgs', Bin};
 
 %% When error is received to the fn, error is returned
 get_will_flgs({error, _Reason, _Bin} = Error) ->
