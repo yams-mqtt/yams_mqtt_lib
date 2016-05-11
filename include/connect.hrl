@@ -11,7 +11,8 @@
 		     | 'invalid_rsvd_flg' % invalid reserved flag
 		     | 'no_conn_flags' % Connect flgas unavailable. 
 		     | 'invalid_will_flgs' % invalid WQoS or WRtn or both.
-		     | 'invalid_pwd_flg'. % invalid password flag
+		     | 'invalid_pwd_flg' % invalid password flag
+		     | 'invalid_kat'. % invalid value for Keep alive time
 
 %% supported protocol
 -type protocol() :: string().
@@ -50,8 +51,11 @@
 			, reserved()
 			}.
 
+-type kat() :: non_neg_integer().
+
 %% variable header
 -record(var_head, { protocol :: protocol()
 		  , level    :: level()
 		  , connflgs :: connect_flgs()
+		  , kat      :: kat()
 		  }).
