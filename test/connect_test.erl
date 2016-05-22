@@ -14,70 +14,43 @@
 %%% Tests : get_vh
 %%%===================================================================
 get_vh_valid_proto_test() ->
-?assertEqual({ ok 
-	     , #var_head{protocol = "MQTT", level = 4, connflgs = {0, 0, 0, 0, 0, 0, 0}, kat = 1}
-	     , <<100:16>>
-	     }
-	    , connect:get_vh(<<4:16, "MQTT", 4:8, 0:1, 0:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 100:16>>)).
+?assertEqual({ok, #conn_vh{protocol = "MQTT", level = 4, connflgs = {0, 0, 0, 0, 0, 0, 0}, kat = 1}, <<100:16>>},
+	     connect:get_vh(<<4:16, "MQTT", 4:8, 0:1, 0:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 100:16>>)).
 
 get_vh_valid_usrpwd_10_test() ->
-?assertEqual({ ok 
-	     , #var_head{protocol = "MQTT", level = 4, connflgs = {1, 0, 0, 0, 0, 0, 0}, kat = 1}
-	     , <<100:16>>
-	     }
-	    , connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 0:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 100:16>>)).
+?assertEqual({ok, #conn_vh{protocol = "MQTT", level = 4, connflgs = {1, 0, 0, 0, 0, 0, 0}, kat = 1}, <<100:16>>},
+	     connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 0:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 100:16>>)).
 
 get_vh_valid_usrpwd_11_test() ->
-?assertEqual({ ok 
-	     , #var_head{protocol = "MQTT", level = 4, connflgs = {1, 1, 0, 0, 0, 0, 0}, kat = 1}
-	     , <<100:16>>
-	     }
-	    , connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 100:16>>)).
+?assertEqual({ok, #conn_vh{protocol = "MQTT", level = 4, connflgs = {1, 1, 0, 0, 0, 0, 0}, kat = 1}, <<100:16>>},
+	     connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 100:16>>)).
 
 get_vh_valid_wwqwr_100_test() ->
-?assertEqual({ ok 
-	     , #var_head{protocol = "MQTT", level = 4, connflgs = {1, 1, 0, 0, 1, 0, 0}, kat = 1}
-	     , <<100:16>>
-	     }
-	    , connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 0:1, 0:2, 1:1, 0:1, 0:1, 1:16, 100:16>>)).
+?assertEqual({ok, #conn_vh{protocol = "MQTT", level = 4, connflgs = {1, 1, 0, 0, 1, 0, 0}, kat = 1}, <<100:16>>},
+	     connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 0:1, 0:2, 1:1, 0:1, 0:1, 1:16, 100:16>>)).
 
 get_vh_valid_wwqwr_110_test() ->
-?assertEqual({ ok 
-	     , #var_head{protocol = "MQTT", level = 4, connflgs = {1, 1, 0, 1, 1, 0, 0}, kat = 1}
-	     , <<100:16>>
-	     }
-	    , connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 0:1, 1:2, 1:1, 0:1, 0:1, 1:16, 100:16>>)).
+?assertEqual({ok, #conn_vh{protocol = "MQTT", level = 4, connflgs = {1, 1, 0, 1, 1, 0, 0}, kat = 1}, <<100:16>>},
+	     connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 0:1, 1:2, 1:1, 0:1, 0:1, 1:16, 100:16>>)).
 
 get_vh_valid_wwqwr_120_test() ->
-?assertEqual({ ok 
-	     , #var_head{protocol = "MQTT", level = 4, connflgs = {1, 1, 0, 2, 1, 0, 0}, kat = 1}
-	     , <<100:16>>
-	     }
-	    , connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 0:1, 2:2, 1:1, 0:1, 0:1, 1:16, 100:16>>)).
+?assertEqual({ok, #conn_vh{protocol = "MQTT", level = 4, connflgs = {1, 1, 0, 2, 1, 0, 0}, kat = 1}, <<100:16>>},
+	     connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 0:1, 2:2, 1:1, 0:1, 0:1, 1:16, 100:16>>)).
 
 get_vh_valid_wwqwr_101_test() ->
-?assertEqual({ ok 
-	     , #var_head{protocol = "MQTT", level = 4, connflgs = {1, 1, 1, 0, 1, 0, 0}, kat = 1}
-	     , <<100:16>>
-	     }
-	    , connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 1:1, 0:2, 1:1, 0:1, 0:1, 1:16, 100:16>>)).
+?assertEqual({ok, #conn_vh{protocol = "MQTT", level = 4, connflgs = {1, 1, 1, 0, 1, 0, 0}, kat = 1}, <<100:16>>},
+	     connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 1:1, 0:2, 1:1, 0:1, 0:1, 1:16, 100:16>>)).
 
 get_vh_valid_wwqwr_111_test() ->
-?assertEqual({ ok 
-	     , #var_head{protocol = "MQTT", level = 4, connflgs = {1, 1, 1, 1, 1, 0, 0}, kat = 1}
-	     , <<100:16>>
-	     }
-	    , connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 1:1, 1:2, 1:1, 0:1, 0:1, 1:16, 100:16>>)).
+?assertEqual({ok, #conn_vh{protocol = "MQTT", level = 4, connflgs = {1, 1, 1, 1, 1, 0, 0}, kat = 1}, <<100:16>>},
+	     connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 1:1, 1:2, 1:1, 0:1, 0:1, 1:16, 100:16>>)).
 
 get_vh_valid_wwqwr_121_test() ->
-?assertEqual({ ok 
-	     , #var_head{protocol = "MQTT", level = 4, connflgs = {1, 1, 1, 2, 1, 0, 0}, kat = 1}
-	     , <<100:16>>
-	     }
-	    , connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 1:1, 2:2, 1:1, 0:1, 0:1, 1:16, 100:16>>)).
+?assertEqual({ok, #conn_vh{protocol = "MQTT", level = 4, connflgs = {1, 1, 1, 2, 1, 0, 0}, kat = 1}, <<100:16>>},
+	     connect:get_vh(<<4:16, "MQTT", 4:8, 1:1, 1:1, 1:1, 2:2, 1:1, 0:1, 0:1, 1:16, 100:16>>)).
 
 get_vh_invalid_proto_size_test() ->
-?assertEqual({error, 'invalid_proto', <<5:16, "MQTT", 5:8, 0:1, 0:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 100:16>>}, 
+?assertEqual({error, 'invalid_proto', <<5:16, "MQTT", 5:8, 0:1, 0:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 100:16>>},
 	     (connect:get_vh(<<5:16, "MQTT", 5:8, 0:1, 0:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 100:16>>))).
 
 get_vh_invalid_proto_name_test() ->
@@ -201,3 +174,15 @@ get_rsvd_flg_err_in_err_out_test() ->
     ?assertEqual({error, 'invalid_proto', <<4:16, "foob", 4:8, 0:1, 0:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 100:16>>},
 		 (connect:get_reserved_flg({error, 'invalid_proto', <<4:16, "foob", 4:8, 0:1, 0:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 100:16>>}))).
 
+%%%===================================================================
+%%% Tests : get_client_id
+%%%===================================================================
+get_client_id_valid_test() ->
+    ?assertEqual({ok, {0, 0, 0, 0, 0, 0, 0}, <<>>, #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""}},
+		 (connect:get_client_id({ok, {0, 0, 0, 0, 0, 0, 0}, <<3:16, "abc">>}))).
+
+get_client_id_invalid_test() ->
+    ?assertEqual({error,invalid_client_id,{0,0,0,0,0,0,0},<<"ab">>},
+		 (connect:get_client_id({ok, {0, 0, 0, 0, 0, 0, 0}, <<3:16, "ab">>}))).
+
+    
