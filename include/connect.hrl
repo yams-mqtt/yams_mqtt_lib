@@ -12,7 +12,13 @@
 		     | 'no_conn_flags' % Connect flgas unavailable. 
 		     | 'invalid_will_flgs' % invalid WQoS or WRtn or both.
 		     | 'invalid_pwd_flg' % invalid password flag
-		     | 'invalid_kat'. % invalid value for Keep alive time
+		     | 'invalid_kat' % invalid value for Keep alive time
+		     | 'invalid_client_id' % invalid client ID
+		     | 'invalid_will_topic'
+		     | 'invalid_will_msg'
+		     | 'invalid_user'
+		     | 'invalid_password'
+		     | 'payload_too_long'.
 
 %% supported protocol
 -type protocol() :: string().
@@ -54,8 +60,22 @@
 -type kat() :: non_neg_integer().
 
 %% variable header
--record(var_head, { protocol :: protocol()
-		  , level    :: level()
-		  , connflgs :: connect_flgs()
-		  , kat      :: kat()
-		  }).
+-record(conn_vh, { protocol :: protocol()
+		 , level    :: level()
+		 , connflgs :: connect_flgs()
+		 , kat      :: kat()
+		 }).
+
+%% will topic
+-type will_topic() :: string().
+
+%% will message
+-type will_msg() :: string().
+
+%% connect payload
+-record(conn_pl, { id  = "" :: clientId()
+	         , wt  = "" :: will_topic()
+		 , wm  = "" :: will_msg()
+		 , usr = "" :: userName()
+		 , pwd = "" :: password()
+		 }).
