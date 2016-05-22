@@ -11,6 +11,48 @@
 -include("../include/connect.hrl").
 
 %%%===================================================================
+%%% Tests : parse
+%%%===================================================================
+parse_with_id_test()->
+?assertEqual({ok, 
+	      #conn_vh{protocol = "MQTT", level = 4, connflgs = {0, 0, 0, 0, 0, 0, 0}, kat = 1}, 
+	      #conn_pl{id = "abcde", wt = "", wm = "", usr = "", pwd = ""}
+	     },
+	     connect:parse(<<4:16, "MQTT", 4:8, 0:1, 0:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 5:16, "abcde">>)).
+
+parse_with_invalid_proto_lvl_test()->
+?assertEqual({error,connack1, <<4:16, "MQTT", 5:8, 0:1, 0:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 5:16, "abcde">>},
+	     connect:parse(<<4:16, "MQTT", 5:8, 0:1, 0:1, 0:1, 0:2, 0:1, 0:1, 0:1, 1:16, 5:16, "abcde">>)).
+
+parse_with_id_wt_wm_test()->
+?assertEqual({ok, 
+	      #conn_vh{protocol = "MQTT", level = 4, connflgs = {0, 0, 0, 0, 1, 0, 0}, kat = 1}, 
+	      #conn_pl{id = "abcde", wt = "ab", wm = "ab", usr = "", pwd = ""}
+	     },
+	     connect:parse(<<4:16, "MQTT", 4:8, 0:1, 0:1, 0:1, 0:2, 1:1, 0:1, 0:1, 1:16, 5:16, "abcde", 2:16, "ab", 2:16, "ab">>)).
+
+parse_with_id_wt_wm_usr_test()->
+?assertEqual({ok, 
+	      #conn_vh{protocol = "MQTT", level = 4, connflgs = {1, 0, 0, 0, 1, 0, 0}, kat = 1}, 
+	      #conn_pl{id = "abcde", wt = "ab", wm = "ab", usr = "ab", pwd = ""}
+	     },
+	     connect:parse(<<4:16, "MQTT", 4:8, 1:1, 0:1, 0:1, 0:2, 1:1, 0:1, 0:1, 1:16, 5:16, "abcde", 2:16, "ab", 2:16, "ab", 2:16, "ab">>)).
+
+parse_with_id_wt_wm_usr_pwd_test()->
+?assertEqual({ok, 
+	      #conn_vh{protocol = "MQTT", level = 4, connflgs = {1, 1, 0, 0, 1, 0, 0}, kat = 1}, 
+	      #conn_pl{id = "abcde", wt = "ab", wm = "ab", usr = "ab", pwd = "xy"}
+	     },
+	     connect:parse(<<4:16, "MQTT", 4:8, 1:1, 1:1, 0:1, 0:2, 1:1, 0:1, 0:1, 1:16, 5:16, "abcde", 2:16, "ab", 2:16, "ab", 2:16, "ab", 2:16, "xy">>)).
+
+parse_with_pl_too_long_test()->
+?assertEqual({error,payload_too_long,<<"z">>},
+	     connect:parse(<<4:16, "MQTT", 4:8, 1:1, 1:1, 0:1, 0:2, 1:1, 0:1, 0:1, 1:16, 5:16, "abcde", 2:16, "ab", 2:16, "ab", 2:16, "ab", 2:16, "xyz">>)).
+
+parse_without_id_pwd_test()->
+?assertEqual({error,invalid_password,<<>>},
+	     connect:parse(<<4:16, "MQTT", 4:8, 1:1, 1:1, 0:1, 0:2, 1:1, 0:1, 0:1, 1:16, 5:16, "abcde", 2:16, "ab", 2:16, "ab", 2:16, "ab">>)).
+%%%===================================================================
 %%% Tests : get_vh
 %%%===================================================================
 get_vh_valid_proto_test() ->
@@ -182,7 +224,148 @@ get_client_id_valid_test() ->
 		 (connect:get_client_id({ok, {0, 0, 0, 0, 0, 0, 0}, <<3:16, "abc">>}))).
 
 get_client_id_invalid_test() ->
-    ?assertEqual({error,invalid_client_id,{0,0,0,0,0,0,0},<<"ab">>},
+    ?assertEqual({error,invalid_client_id, {0, 0, 0, 0, 0, 0, 0}, <<3:16, "ab">>},
 		 (connect:get_client_id({ok, {0, 0, 0, 0, 0, 0, 0}, <<3:16, "ab">>}))).
 
-    
+%%%===================================================================
+%%% Tests : get_will_topic
+%%%===================================================================
+get_will_topic_valid_1_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({ok, {0, 0, 0, 0, 1, 0, 0}, <<>>, ConnPl#conn_pl{ wt = "abcde!@#$%" }},
+		 (connect:get_will_topic({ok, {0, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$%">>, ConnPl}))).
+
+get_will_topic_valid_2_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({ok, {0, 0, 0, 0, 1, 0, 0}, <<"xyz">>, ConnPl#conn_pl{ wt = "abcde!@#$%" }},
+		 (connect:get_will_topic({ok, {0, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$%xyz">>, ConnPl}))).
+
+get_will_topic_valid_3_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({ok, {0, 0, 0, 0, 1, 0, 0}, <<3:16, "xyz">>, ConnPl#conn_pl{ wt = "abcde!@#$%" }},
+		 (connect:get_will_topic({ok, {0, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$%", 3:16, "xyz">>, ConnPl}))).
+
+get_invalid_will_topic_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_will_topic, {0, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>},
+		 (connect:get_will_topic({ok, {0, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>, ConnPl}))).
+
+get_will_topic_when_error_passed_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_client_id, {0, 0, 0, 0, 0, 0, 0}, <<3:10, "ab">>},
+		 (connect:get_will_topic({error,invalid_client_id, {0, 0, 0, 0, 0, 0, 0}, <<3:10, "ab">>}))).
+
+%%%===================================================================
+%%% Tests : get_will_msg
+%%%===================================================================
+get_will_msg_valid_1_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "abcde!@#$%", wm = "", usr = "", pwd = ""},
+    ?assertEqual({ok, {0, 0, 0, 0, 1, 0, 0}, <<>>, ConnPl#conn_pl{ wm = "abcde!@#$%" }},
+		 (connect:get_will_msg({ok, {0, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$%">>, ConnPl}))).
+
+get_will_msg_valid_2_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "abcde!@#$%", wm = "", usr = "", pwd = ""},
+    ?assertEqual({ok, {0, 0, 0, 0, 1, 0, 0}, <<"xyz">>, ConnPl#conn_pl{ wm = "abcde!@#$%" }},
+		 (connect:get_will_msg({ok, {0, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$%xyz">>, ConnPl}))).
+
+get_will_msg_valid_3_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "abcde!@#$%", wm = "", usr = "", pwd = ""},
+    ?assertEqual({ok, {0, 0, 0, 0, 1, 0, 0}, <<3:16, "xyz">>, ConnPl#conn_pl{ wm = "abcde!@#$%" }},
+		 (connect:get_will_msg({ok, {0, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$%", 3:16, "xyz">>, ConnPl}))).
+
+get_invalid_will_msg_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "abcde!@#$%", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_will_msg, {0, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>},
+		 (connect:get_will_msg({ok, {0, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>, ConnPl}))).
+
+get_will_msg_when_error_passed_1_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_client_id, {0, 0, 0, 0, 0, 0, 0}, <<3:10, "ab">>},
+		 (connect:get_will_msg({error,invalid_client_id, {0, 0, 0, 0, 0, 0, 0}, <<3:10, "ab">>}))).
+
+get_will_msg_when_error_passed_2_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_will_topic, {0, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>},
+		 (connect:get_will_msg({error,invalid_will_topic, {0, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>}))).
+
+%%%===================================================================
+%%% Tests : get_usr
+%%%===================================================================
+get_usr_valid_1_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "abcde!@#$%", wm = "abcde!@#$%", usr = "", pwd = ""},
+    ?assertEqual({ok, {1, 0, 0, 0, 1, 0, 0}, <<>>, ConnPl#conn_pl{ usr = "abcde!@#$%" }},
+		 (connect:get_usr({ok, {1, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$%">>, ConnPl}))).
+
+get_usr_valid_2_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "abcde!@#$%", wm = "abcde!@#$%", usr = "", pwd = ""},
+    ?assertEqual({ok, {1, 0, 0, 0, 1, 0, 0}, <<"xyz">>, ConnPl#conn_pl{ usr = "abcde!@#$%" }},
+		 (connect:get_usr({ok, {1, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$%xyz">>, ConnPl}))).
+
+get_usr_valid_3_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({ok, {1, 0, 0, 0, 0, 0, 0}, <<3:16, "xyz">>, ConnPl#conn_pl{ usr = "abcde!@#$%" }},
+		 (connect:get_usr({ok, {1, 0, 0, 0, 0, 0, 0}, <<10:16, "abcde!@#$%", 3:16, "xyz">>, ConnPl}))).
+
+get_invalid_usr_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "abcde!@#$%", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_user, {1, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>},
+		 (connect:get_usr({ok, {1, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>, ConnPl}))).
+
+get_usr_when_error_passed_1_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_client_id, {1, 0, 0, 0, 0, 0, 0}, <<3:10, "ab">>},
+		 (connect:get_usr({error,invalid_client_id, {1, 0, 0, 0, 0, 0, 0}, <<3:10, "ab">>}))).
+
+get_usr_when_error_passed_2_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_will_topic, {1, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>},
+		 (connect:get_usr({error,invalid_will_topic, {1, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>}))).
+
+get_usr_when_error_passed_3_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_will_msg, {1, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>},
+		 (connect:get_usr({error,invalid_will_msg, {1, 0, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>}))).
+
+%%%===================================================================
+%%% Tests : get_pwd
+%%%===================================================================
+get_pwd_valid_1_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "abcde!@#$%", wm = "abcde!@#$%", usr = "", pwd = ""},
+    ?assertEqual({ok, {1, 1, 0, 0, 1, 0, 0}, <<>>, ConnPl#conn_pl{ pwd = "abcde!@#$%" }},
+		 (connect:get_pwd({ok, {1, 1, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$%">>, ConnPl}))).
+
+get_pwd_valid_2_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "abcde!@#$%", wm = "abcde!@#$%", usr = "", pwd = ""},
+    ?assertEqual({ok, {1, 1, 0, 0, 1, 0, 0}, <<"xyz">>, ConnPl#conn_pl{ pwd = "abcde!@#$%" }},
+		 (connect:get_pwd({ok, {1, 1, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$%xyz">>, ConnPl}))).
+
+get_pwd_valid_3_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({ok, {1, 1, 0, 0, 0, 0, 0}, <<3:16, "xyz">>, ConnPl#conn_pl{ pwd = "abcde!@#$%" }},
+		 (connect:get_pwd({ok, {1, 1, 0, 0, 0, 0, 0}, <<10:16, "abcde!@#$%", 3:16, "xyz">>, ConnPl}))).
+
+get_invalid_pwd_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "abcde!@#$%", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_password, {1, 1, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>},
+		 (connect:get_pwd({ok, {1, 1, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>, ConnPl}))).
+
+get_pwd_when_error_passed_1_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_client_id, {1, 1, 0, 0, 0, 0, 0}, <<3:10, "ab">>},
+		 (connect:get_pwd({error,invalid_client_id, {1, 1, 0, 0, 0, 0, 0}, <<3:10, "ab">>}))).
+
+get_pwd_when_error_passed_2_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_will_topic, {1, 1, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>},
+		 (connect:get_pwd({error,invalid_will_topic, {1, 1, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>}))).
+
+get_pwd_when_error_passed_3_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_will_msg, {1, 1, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>},
+		 (connect:get_pwd({error,invalid_will_msg, {1, 1, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>}))).
+
+get_pwd_when_error_passed_4_test() ->
+    ConnPl = #conn_pl{id = "abc", wt = "", wm = "", usr = "", pwd = ""},
+    ?assertEqual({error,invalid_user, {1, 1, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>},
+		 (connect:get_pwd({error,invalid_user, {1, 1, 0, 0, 1, 0, 0}, <<10:16, "abcde!@#$">>}))).
+

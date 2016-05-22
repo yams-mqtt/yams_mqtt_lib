@@ -172,8 +172,8 @@ get_client_id({ok, ConnFlags, Payload}) ->
     case yams_mqtt_lib:decode_str(Payload) of
 	{ok, Str, RBin} ->
 	    {ok, ConnFlags, RBin, #conn_pl{ id = Str }};
-	{error, _Reason, Bin} ->
-	    {error, invalid_client_id, ConnFlags, Bin}
+	{error, _Reason, _Bin} ->
+	    {error, invalid_client_id, ConnFlags, Payload}
     end.
 	 
 %% ==========
@@ -183,10 +183,12 @@ get_will_topic({ok, {_Usr, _Pwd, _WRtn, _WQos, 1, _ClnSess, 0} = ConnFlags, Payl
     case yams_mqtt_lib:decode_str(Payload) of
 	{ok, Str, RBin} ->
 	    {ok, ConnFlags, RBin, ConnPl#conn_pl{ wt = Str }};
-	{error, _Reason, Bin} ->
-	    {error, invalid_will_topic, ConnFlags, Bin}
+	{error, _Reason, _Bin} ->
+	    {error, invalid_will_topic, ConnFlags, Payload}
     end;
-get_will_topic(Error) ->
+get_will_topic({ok, {_Usr, _Pwd, _WRtn, _WQos, 0, _ClnSess, 0} = ConnFlags, Payload, ConnPl}) ->
+    {ok, ConnFlags, Payload, ConnPl};
+get_will_topic({error, _Reason, _Cf, _Bin} = Error) ->
     Error.
 
 %% ==========
@@ -199,7 +201,9 @@ get_will_msg({ok, {_Usr, _Pwd, _WRtn, _WQos, 1, _ClnSess, 0} = ConnFlags, Payloa
 	{error, _Reason, _Bin} ->
 	    {error, invalid_will_msg, ConnFlags, Payload}
     end;
-get_will_msg(Error) ->
+get_will_msg({ok, {_Usr, _Pwd, _WRtn, _WQos, 0, _ClnSess, 0} = ConnFlags, Payload, ConnPl}) ->
+    {ok, ConnFlags, Payload, ConnPl};
+get_will_msg({error, _Reason, _Cf, _Bin} = Error) ->
     Error.
 
 %% ==========
@@ -209,9 +213,11 @@ get_usr({ok, {1, _Pwd, _WRtn, _WQos, _will, _ClnSess, 0} = ConnFlags, Payload, C
     case yams_mqtt_lib:decode_str(Payload) of
 	{ok, Str, RBin} ->
 	    {ok, ConnFlags, RBin, ConnPl#conn_pl{ usr = Str }};
-	{error, _Reason, Bin} ->
-	    {error, invalid_user, ConnFlags, Bin}
+	{error, _Reason, _Bin} ->
+	    {error, invalid_user, ConnFlags, Payload}
     end;
+get_usr({ok, {0, _Pwd, _WRtn, _WQos, _will, _ClnSess, 0} = ConnFlags, Payload, ConnPl}) ->
+    {ok, ConnFlags, Payload, ConnPl};
 get_usr(Error) ->
     Error.
 
@@ -222,10 +228,12 @@ get_pwd({ok, {1, 1, _WRtn, _WQos, _will, _ClnSess, 0} = ConnFlags, Payload, Conn
     case yams_mqtt_lib:decode_str(Payload) of
 	{ok, Str, RBin} ->
 	    {ok, ConnFlags, RBin, ConnPl#conn_pl{ pwd = Str }};
-	{error, _Reason, Bin} ->
-	    {error, invalid_password, ConnFlags, Bin}
+	{error, _Reason, _Bin} ->
+	    {error, invalid_password, ConnFlags, Payload}
     end;
-get_pwd(Error) ->
+get_pwd({ok, {_Usr, 0, _WRtn, _WQos, _will, _ClnSess, 0} = ConnFlags, Payload, ConnPl}) ->
+    {ok, ConnFlags, Payload, ConnPl};
+get_pwd({error, _Reason, _Cf, _Bin} = Error) ->
     Error.
 
 %%===================
@@ -237,5 +245,5 @@ chk_empty_payload({ok, ConnFlags, <<>>, ConnPl}) ->
     {ok, ConnFlags, <<>>, ConnPl};
 chk_empty_payload({ok, ConnFlags, Payload, _ConnPl}) -> 
     {error, payload_too_long, ConnFlags, Payload};
-chk_empty_payload(Error) -> 
+chk_empty_payload({error, _Reason, _Cf, _Bin} = Error) -> 
     Error.
