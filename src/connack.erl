@@ -17,7 +17,7 @@
 -type session_present() :: 0..1.
 -type return_code() :: 0..5.
 -spec get_pkt({session_present(), return_code()}) ->
-	   <<_:4>>.
+	   <<_:32>>.
 %%--------------------------------------------------------------------
 %% @doc
 %% @spec
