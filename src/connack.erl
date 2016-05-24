@@ -23,8 +23,10 @@
 %% @spec
 %% @end
 %%--------------------------------------------------------------------
-get_pkt({SessionPresent, ReturnCode}) when ReturnCode >= 0, ReturnCode =< 5 ->
-    <<2:4, 0:4, 2:8, 0:7, SessionPresent:1, ReturnCode:8>>.
+get_pkt({SessionPresent, 0}) ->
+    <<2:4, 0:4, 2:8, 0:7, SessionPresent:1, 0:8>>;
+get_pkt({_SessionPresent, ReturnCode}) when ReturnCode >= 0, ReturnCode =< 5 ->
+    <<2:4, 0:4, 2:8, 0:7, 0:1, ReturnCode:8>>.
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
